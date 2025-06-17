@@ -1,0 +1,84 @@
+
+%option 8bit
+%option yylineno
+%option noyywrap nounput
+%option nounistd always-interactive
+
+%{
+	#include "lexer.hh"
+	#define YY_DECL SYM_TYPE yylex()
+%}
+
+COMMENT      #[^\r\n]*
+WHITESPACE   [ \f\t]+
+NAME         [_a-zA-Z][_a-zA-Z0-9]*
+
+HEX_NUMBER   0[xX](?:_?[0-9a-fA-F])+
+BIN_NUMBER   0[bB](?:_?[01])+
+OCT_NUMBER   0[oO](?:_?[0-7])+
+
+DEC_NUMBER   (?:0(?:_?0)*|[1-9](?:_?[0-9])*)
+FLOAT_NUMBER ([0-9](?:_?[0-9])*\.(?:[0-9](?:_?[0-9])*)?|\.[0-9](?:_?[0-9])*)
+
+STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
+
+%% /* ================================= Begin ============================== */
+
+"("            return handle::LPAR            (yytext);
+")"            return handle::RPAR            (yytext);
+"["            return handle::LSQB            (yytext);
+"]"            return handle::RSQB            (yytext);
+":"            return handle::COLON           (yytext);
+","            return handle::COMMA           (yytext);
+";"            return handle::SEMI            (yytext);
+"+"            return handle::PLUS            (yytext);
+"-"            return handle::MINUS           (yytext);
+"*"            return handle::STAR            (yytext);
+"/"            return handle::SLASH           (yytext);
+"|"            return handle::VBAR            (yytext);
+"&"            return handle::AMPER           (yytext);
+"<"            return handle::LESS            (yytext);
+">"            return handle::GREATER         (yytext);
+"="            return handle::EQUAL           (yytext);
+"."            return handle::DOT             (yytext);
+"%"            return handle::PERCENT         (yytext);
+"{"            return handle::LBRACE          (yytext);
+"}"            return handle::RBRACE          (yytext);
+"=="           return handle::EQEQUAL         (yytext);
+"!="           return handle::NOTEQUAL        (yytext);
+"<="           return handle::LESSEQUAL       (yytext);
+">="           return handle::GREATEREQUAL    (yytext);
+"~"            return handle::TILDE           (yytext);
+"^"            return handle::CIRCUMFLEX      (yytext);
+"<<"           return handle::LEFTSHIFT       (yytext);
+">>"           return handle::RIGHTSHIFT      (yytext);
+"**"           return handle::DOUBLESTAR      (yytext);
+"+="           return handle::PLUSEQUAL       (yytext);
+"-="           return handle::MINEQUAL        (yytext);
+"*="           return handle::STAREQUAL       (yytext);
+"/="           return handle::SLASHEQUAL      (yytext);
+"%="           return handle::PERCENTEQUAL    (yytext);
+"&="           return handle::AMPEREQUAL      (yytext);
+"|="           return handle::VBAREQUAL       (yytext);
+"^="           return handle::CIRCUMFLEXEQUAL (yytext);
+"<<="          return handle::LEFTSHIFTEQUAL  (yytext);
+">>="          return handle::RIGHTSHIFTEQUAL (yytext);
+"**="          return handle::DOUBLESTAREQUAL (yytext);
+"//"           return handle::DOUBLESLASH     (yytext);
+"//="          return handle::DOUBLESLASHEQUAL(yytext);
+"..."          return handle::ELLIPSIS        (yytext);
+"->"           return handle::RARROW          (yytext);
+"@"            return handle::AT              (yytext);
+"@="           return handle::ATEQUAL         (yytext);
+{WHITESPACE}   return handle::WHITESPACE      (yytext);
+{COMMENT}      return handle::COMMENT         (yytext);
+{NAME}         return handle::NAME            (yytext);
+{HEX_NUMBER}   return handle::HEX_NUMBER      (yytext);
+{BIN_NUMBER}   return handle::BIN_NUMBER      (yytext);
+{OCT_NUMBER}   return handle::OCT_NUMBER      (yytext);
+{DEC_NUMBER}   return handle::DEC_NUMBER      (yytext);
+{FLOAT_NUMBER} return handle::FLOAT_NUMBER    (yytext);
+{STRING}       return handle::STRING          (yytext);
+<<EOF>>        return handle::EOF_TOK         (yytext);
+
+%% /* ================================= End ============================== */

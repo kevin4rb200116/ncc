@@ -1,0 +1,435 @@
+
+%skeleton "lalr1.cc" // -*- C++ -*-
+%require "3.8.2"
+%header
+
+%define api.token.raw
+
+%define api.token.constructor
+%define api.value.type variant
+%define parse.assert
+
+%code requires {
+  #include <iostream>
+  #include <string>
+  #include <memory>
+  #include <vector>
+
+  #include "ast.hh"
+
+	using std::string;
+	using std::vector;
+}
+
+%locations
+
+%define api.token.prefix {TOK_}
+%token
+  LPAR
+  RPAR
+  LSQB
+  RSQB
+  COLON
+  COMMA
+  SEMI
+  PLUS
+  MINUS
+  STAR
+  SLASH
+  VBAR
+  AMPER
+  LESS
+  GREATER
+  EQUAL
+  DOT
+  PERCENT
+  LBRACE
+  RBRACE
+  EQEQUAL
+  NOTEQUAL
+  LESSEQUAL
+  GREATEREQUAL
+  TILDE
+  CIRCUMFLEX
+  LEFTSHIFT
+  RIGHTSHIFT
+  DOUBLESTAR
+  PLUSEQUAL
+  MINEQUAL
+  STAREQUAL
+  SLASHEQUAL
+  PERCENTEQUAL
+  AMPEREQUAL
+  VBAREQUAL
+  CIRCUMFLEXEQUAL
+  LEFTSHIFTEQUAL
+  RIGHTSHIFTEQUAL
+  DOUBLESTAREQUAL
+  DOUBLESLASH
+  DOUBLESLASHEQUAL
+  ELLIPSIS
+  RARROW
+  AT
+  ATEQUAL
+  HASHTAG
+;
+
+%left PLUS MINUS;
+%left STAR SLASH;
+
+%token <string> WHITESPACE
+%token <string> COMMENT
+%token <string> NAME
+%token <string> HEX_NUMBER
+%token <string> BIN_NUMBER
+%token <string> OCT_NUMBER
+%token <string> DEC_NUMBER
+%token <string> FLOAT_NUMBER
+%token <string> STRING
+
+%token <string>          IDENTIFIER
+%token <int>             NUMBER
+%token DEF
+%token EXTERN
+
+%type <ast::Expression*> expression
+%type <ast::Function*>   top_level
+%type <ast::Prototype*>  external
+%type <ast::Prototype*>  prototype
+%type <ast::Expression*> primary
+%type <ast::Expression*> number
+%type <ast::Function*>   definition
+
+%type <vector<ast::Expression*>> call_args
+%type <vector<string>>           proto_args
+
+%% /* ================================= Begin ============================== */
+
+%code{
+  yy::parser::symbol_type yylex();
+};
+
+%start program;
+
+program:
+    %empty
+  | program statement
+  ;
+
+statement:
+    external[expr]    SEMI { fprintf(stdout, "parsed external\n"); }
+
+  | definition[expr]  SEMI { fprintf(stdout, "parsed definition\n"); }
+
+  | top_level[expr]   SEMI { fprintf(stdout, "parsed top_level\n"); }
+  ;
+
+definition[def]:
+    prototype[proto] expression[body] {
+      $def = new ast::Function($proto, $body); }
+  ;
+
+top_level[exp]:
+    expression[body] {
+      $exp = new ast::Function(
+        new ast::Prototype("__anon_expr", vector<string>()), $body);
+    }
+  ;
+
+external[proto]:
+    EXTERN IDENTIFIER[name] LPAR proto_args[args] RPAR {
+      $proto = new ast::Prototype($name, $args); }
+  | EXTERN IDENTIFIER[name] LPAR RPAR {
+      $proto = new ast::Prototype($name, vector<string>()); }
+  ;
+
+prototype[proto]:
+    DEF IDENTIFIER[name] LPAR proto_args[args] RPAR {
+      $proto = new ast::Prototype($name, $args); }
+  | DEF IDENTIFIER[name] LPAR RPAR {
+      $proto = new ast::Prototype($name, vector<string>()); }
+  ;
+
+proto_args[args]:
+    IDENTIFIER[arg] {
+      $args = vector<string>(); 
+      $args.push_back($arg); }
+  | proto_args[rest] COMMA IDENTIFIER[arg] {
+      $args = $rest;
+      $args.push_back($arg); }
+  ;
+
+primary[exp]:
+    IDENTIFIER[name] {
+      $exp = new ast::Variable($name); }
+  | IDENTIFIER[name] LPAR call_args[args] RPAR {
+      $exp = new ast::Call($name, $args); }
+  | IDENTIFIER[name] LPAR RPAR {
+      $exp = new ast::Call($name, vector<ast::Expression*>()); }
+  | number
+  | LPAR expression[inexp] RPAR { 
+      $exp = $inexp; }
+  ;
+
+number[exp]:
+    HEX_NUMBER[str] {
+      $exp = new ast::Number($str, ast::Number::Kind::HEX_NUMBER); }
+  | BIN_NUMBER[str] {
+    $exp = new ast::Number($str, ast::Number::Kind::BIN_NUMBER); }
+  | OCT_NUMBER[str] {
+    $exp = new ast::Number($str, ast::Number::Kind::OCT_NUMBER); }
+  | DEC_NUMBER[str] {
+    $exp = new ast::Number($str, ast::Number::Kind::DEC_NUMBER); }
+  | FLOAT_NUMBER[str] {
+    $exp = new ast::Number($str, ast::Number::Kind::FLOAT_NUMBER); }
+  ;
+
+call_args[args]:
+    expression[arg] {
+      $args = vector<ast::Expression*>();
+      $args.push_back($arg); }
+  | call_args[rest] COMMA expression[arg] {
+      $args = $rest;
+      $args.push_back($arg); }
+  ;
+
+expression[exp]:
+    primary { 
+      $exp = $1; }
+  | expression[lhs] PLUS expression[rhs] {
+      $exp = new ast::Binary("+", $lhs, $rhs); }
+  | expression[lhs] MINUS expression[rhs] {
+      $exp = new ast::Binary("-", $lhs, $rhs); }
+  | expression[lhs] STAR expression[rhs] {
+      $exp = new ast::Binary("*", $lhs, $rhs); }
+  | expression[lhs] SLASH expression[rhs] {
+      $exp = new ast::Binary("/", $lhs, $rhs); }
+  ;
+
+%% /* ================================= End ============================== */
+
+namespace handle{
+  yy::parser::symbol_type STRING(char *yytext) {
+    return yy::parser::make_STRING(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type COMMENT(char *yytext) {
+    return yy::parser::make_COMMENT(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type WHITESPACE(char *yytext) {
+    return yy::parser::make_WHITESPACE(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type NAME(char *yytext) {
+    return yy::parser::make_NAME(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type HEX_NUMBER(char *yytext) {
+    return yy::parser::make_HEX_NUMBER(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type BIN_NUMBER(char *yytext) {
+    return yy::parser::make_BIN_NUMBER(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type OCT_NUMBER(char *yytext) {
+    return yy::parser::make_OCT_NUMBER(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type DEC_NUMBER(char *yytext) {
+    return yy::parser::make_DEC_NUMBER(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type FLOAT_NUMBER(char *yytext) {
+    return yy::parser::make_FLOAT_NUMBER(string(yytext), yy::location());
+  }
+
+  yy::parser::symbol_type LPAR(char *yytext) {
+    return yy::parser::make_LPAR(yy::location());
+  }
+
+  yy::parser::symbol_type RPAR(char *yytext) {
+    return yy::parser::make_RPAR(yy::location());
+  }
+
+  yy::parser::symbol_type LSQB(char *yytext) {
+    return yy::parser::make_LSQB(yy::location());
+  }
+
+  yy::parser::symbol_type RSQB(char *yytext) {
+    return yy::parser::make_RSQB(yy::location());
+  }
+
+  yy::parser::symbol_type COLON(char *yytext) {
+    return yy::parser::make_COLON(yy::location());
+  }
+
+  yy::parser::symbol_type COMMA(char *yytext) {
+    return yy::parser::make_COMMA(yy::location());
+  }
+
+  yy::parser::symbol_type SEMI(char *yytext) {
+    return yy::parser::make_SEMI(yy::location());
+  }
+
+  yy::parser::symbol_type PLUS(char *yytext) {
+    return yy::parser::make_PLUS(yy::location());
+  }
+
+  yy::parser::symbol_type MINUS(char *yytext) {
+    return yy::parser::make_MINUS(yy::location());
+  }
+
+  yy::parser::symbol_type STAR(char *yytext) {
+    return yy::parser::make_STAR(yy::location());
+  }
+
+  yy::parser::symbol_type SLASH(char *yytext) {
+    return yy::parser::make_SLASH(yy::location());
+  }
+
+  yy::parser::symbol_type VBAR(char *yytext) {
+    return yy::parser::make_VBAR(yy::location());
+  }
+
+  yy::parser::symbol_type AMPER(char *yytext) {
+    return yy::parser::make_AMPER(yy::location());
+  }
+
+  yy::parser::symbol_type LESS(char *yytext) {
+    return yy::parser::make_LESS(yy::location());
+  }
+
+  yy::parser::symbol_type GREATER(char *yytext) {
+    return yy::parser::make_GREATER(yy::location());
+  }
+
+  yy::parser::symbol_type EQUAL(char *yytext) {
+    return yy::parser::make_EQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type DOT(char *yytext) {
+    return yy::parser::make_DOT(yy::location());
+  }
+
+  yy::parser::symbol_type PERCENT(char *yytext) {
+    return yy::parser::make_PERCENT(yy::location());
+  }
+
+  yy::parser::symbol_type LBRACE(char *yytext) {
+    return yy::parser::make_LBRACE(yy::location());
+  }
+
+  yy::parser::symbol_type RBRACE(char *yytext) {
+    return yy::parser::make_RBRACE(yy::location());
+  }
+
+  yy::parser::symbol_type EQEQUAL(char *yytext) {
+    return yy::parser::make_EQEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type NOTEQUAL(char *yytext) {
+    return yy::parser::make_NOTEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type LESSEQUAL(char *yytext) {
+    return yy::parser::make_LESSEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type GREATEREQUAL(char *yytext) {
+    return yy::parser::make_GREATEREQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type TILDE(char *yytext) {
+    return yy::parser::make_TILDE(yy::location());
+  }
+
+  yy::parser::symbol_type CIRCUMFLEX(char *yytext) {
+    return yy::parser::make_CIRCUMFLEX(yy::location());
+  }
+
+  yy::parser::symbol_type LEFTSHIFT(char *yytext) {
+    return yy::parser::make_LEFTSHIFT(yy::location());
+  }
+
+  yy::parser::symbol_type RIGHTSHIFT(char *yytext) {
+    return yy::parser::make_RIGHTSHIFT(yy::location());
+  }
+
+  yy::parser::symbol_type DOUBLESTAR(char *yytext) {
+    return yy::parser::make_DOUBLESTAR(yy::location());
+  }
+
+  yy::parser::symbol_type PLUSEQUAL(char *yytext) {
+    return yy::parser::make_PLUSEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type MINEQUAL(char *yytext) {
+    return yy::parser::make_MINEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type STAREQUAL(char *yytext) {
+    return yy::parser::make_STAREQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type SLASHEQUAL(char *yytext) {
+    return yy::parser::make_SLASHEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type PERCENTEQUAL(char *yytext) {
+    return yy::parser::make_PERCENTEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type AMPEREQUAL(char *yytext) {
+    return yy::parser::make_AMPEREQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type VBAREQUAL(char *yytext) {
+    return yy::parser::make_VBAREQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type CIRCUMFLEXEQUAL(char *yytext) {
+    return yy::parser::make_CIRCUMFLEXEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type LEFTSHIFTEQUAL(char *yytext) {
+    return yy::parser::make_LEFTSHIFTEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type RIGHTSHIFTEQUAL(char *yytext) {
+    return yy::parser::make_RIGHTSHIFTEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type DOUBLESTAREQUAL(char *yytext) {
+    return yy::parser::make_DOUBLESTAREQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type DOUBLESLASH(char *yytext) {
+    return yy::parser::make_DOUBLESLASH(yy::location());
+  }
+
+  yy::parser::symbol_type DOUBLESLASHEQUAL(char *yytext) {
+    return yy::parser::make_DOUBLESLASHEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type ELLIPSIS(char *yytext) {
+    return yy::parser::make_ELLIPSIS(yy::location());
+  }
+
+  yy::parser::symbol_type RARROW(char *yytext) {
+    return yy::parser::make_RARROW(yy::location());
+  }
+
+  yy::parser::symbol_type AT(char *yytext) {
+    return yy::parser::make_AT(yy::location());
+  }
+
+  yy::parser::symbol_type ATEQUAL(char *yytext) {
+    return yy::parser::make_ATEQUAL(yy::location());
+  }
+
+  yy::parser::symbol_type EOF_TOK(char *yytext) {
+    return yy::parser::make_YYEOF(yy::location());
+  }
+} // namespace handle
