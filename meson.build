@@ -47,7 +47,19 @@ BISONFLAGS = [
 
 compile = ['c++', CXXFLAGS, '-c', '-o', '@OUTPUT@', '@INPUT@']
 
-link = ['c++', LDFLAGS, '-ly', '-o', '@OUTPUT@', '@INPUT@']
+link = ['c++', LDFLAGS, '-o', '@OUTPUT@', '@INPUT@']
+
+lexer_src = custom_target(
+  'lexer_src',
+  input: 'lexer/src/main.lxx',
+
+  output: [
+    'lexer.cc',
+    'lexer.hh'],
+  command: [flex,
+    '--outfile=@OUTPUT0@',
+    '--header-file=@OUTPUT1@',    
+    '@INPUT@'])
 
 parser_src = custom_target(
   'parser_src',
@@ -60,6 +72,7 @@ parser_src = custom_target(
     'parser.xml',
     'parser.output',
     'location.hh'],
+  depends: lexer_src[1],
   command: [bison, BISONFLAGS,
     '--output=@OUTPUT0@',
     '--header=@OUTPUT1@',

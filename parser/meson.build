@@ -11,6 +11,7 @@ parser_bin = custom_target(
   output: 'parser',
   input: [
     lexer_obj[0],
+    lex_handle_obj,
     parser_obj[0], 
     custom_target(
       'parser_main',

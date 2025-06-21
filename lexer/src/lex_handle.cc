@@ -1,292 +1,283 @@
 
-#include <cstdio>
-
 #include "lex_handle.hh"
 #include "lexer.hh"
 
 yytoken_kind_t handle::LPAR(char* text) {
-	fprintf(stdout,"{ LPAR: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_LPAR;
 }
 
 yytoken_kind_t handle::RPAR(char* text) {
-	fprintf(stdout,"{ RPAR: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_RPAR;
 }
 
 yytoken_kind_t handle::LSQB(char* text) {
-	fprintf(stdout,"{ LSQB: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_LSQB;
 }
 
 yytoken_kind_t handle::RSQB(char* text) {
-	fprintf(stdout,"{ RSQB: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_RSQB;
 }
 
 yytoken_kind_t handle::COLON(char* text) {
-	fprintf(stdout,"{ COLON: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_COLON;
 }
 
 yytoken_kind_t handle::COMMA(char* text) {
-	fprintf(stdout,"{ COMMA: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_COMMA;
 }
 
 yytoken_kind_t handle::SEMI(char* text) {
-	fprintf(stdout,"{ SEMI: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_SEMI;
 }
 
 yytoken_kind_t handle::PLUS(char* text) {
-	fprintf(stdout,"{ PLUS: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_PLUS;
 }
 
 yytoken_kind_t handle::MINUS(char* text) {
-	fprintf(stdout,"{ MINUS: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_MINUS;
 }
 
 yytoken_kind_t handle::STAR(char* text) {
-	fprintf(stdout,"{ STAR: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_STAR;
 }
 
 yytoken_kind_t handle::SLASH(char* text) {
-	fprintf(stdout,"{ SLASH: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_SLASH;
 }
 
 yytoken_kind_t handle::VBAR(char* text) {
-	fprintf(stdout,"{ VBAR: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_VBAR;
 }
 
 yytoken_kind_t handle::AMPER(char* text) {
-	fprintf(stdout,"{ AMPER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_AMPER;
 }
 
 yytoken_kind_t handle::LESS(char* text) {
-	fprintf(stdout,"{ LESS: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_LESS;
 }
 
 yytoken_kind_t handle::GREATER(char* text) {
-	fprintf(stdout,"{ GREATER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_GREATER;
 }
 
 yytoken_kind_t handle::EQUAL(char* text) {
-	fprintf(stdout,"{ EQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_EQUAL;
 }
 
 yytoken_kind_t handle::DOT(char* text) {
-	fprintf(stdout,"{ DOT: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_DOT;
 }
 
 yytoken_kind_t handle::PERCENT(char* text) {
-	fprintf(stdout,"{ PERCENT: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_PERCENT;
 }
 
 yytoken_kind_t handle::LBRACE(char* text) {
-	fprintf(stdout,"{ LBRACE: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_LBRACE;
 }
 
 yytoken_kind_t handle::RBRACE(char* text) {
-	fprintf(stdout,"{ RBRACE: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_RBRACE;
 }
 
 yytoken_kind_t handle::EQEQUAL(char* text) {
-	fprintf(stdout,"{ EQEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_EQEQUAL;
 }
 
 yytoken_kind_t handle::NOTEQUAL(char* text) {
-	fprintf(stdout,"{ NOTEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_NOTEQUAL;
 }
 
 yytoken_kind_t handle::LESSEQUAL(char* text) {
-	fprintf(stdout,"{ LESSEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_LESSEQUAL;
 }
 
 yytoken_kind_t handle::GREATEREQUAL(char* text) {
-	fprintf(stdout,"{ GREATEREQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_GREATEREQUAL;
 }
 
 yytoken_kind_t handle::TILDE(char* text) {
-	fprintf(stdout,"{ TILDE: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_TILDE;
 }
 
 yytoken_kind_t handle::CIRCUMFLEX(char* text) {
-	fprintf(stdout,"{ CIRCUMFLEX: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_CIRCUMFLEX;
 }
 
 yytoken_kind_t handle::LEFTSHIFT(char* text) {
-	fprintf(stdout,"{ LEFTSHIFT: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_LEFTSHIFT;
 }
 
 yytoken_kind_t handle::RIGHTSHIFT(char* text) {
-	fprintf(stdout,"{ RIGHTSHIFT: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_RIGHTSHIFT;
 }
 
 yytoken_kind_t handle::DOUBLESTAR(char* text) {
-	fprintf(stdout,"{ DOUBLESTAR: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_DOUBLESTAR;
 }
 
 yytoken_kind_t handle::PLUSEQUAL(char* text) {
-	fprintf(stdout,"{ PLUSEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_PLUSEQUAL;
 }
 
 yytoken_kind_t handle::MINEQUAL(char* text) {
-	fprintf(stdout,"{ MINEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_MINEQUAL;
 }
 
 yytoken_kind_t handle::STAREQUAL(char* text) {
-	fprintf(stdout,"{ STAREQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_STAREQUAL;
 }
 
 yytoken_kind_t handle::SLASHEQUAL(char* text) {
-	fprintf(stdout,"{ SLASHEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_SLASHEQUAL;
 }
 
 yytoken_kind_t handle::PERCENTEQUAL(char* text) {
-	fprintf(stdout,"{ PERCENTEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_PERCENTEQUAL;
 }
 
 yytoken_kind_t handle::AMPEREQUAL(char* text) {
-	fprintf(stdout,"{ AMPEREQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_AMPEREQUAL;
 }
 
 yytoken_kind_t handle::VBAREQUAL(char* text) {
-	fprintf(stdout,"{ VBAREQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_VBAREQUAL;
 }
 
 yytoken_kind_t handle::CIRCUMFLEXEQUAL(char* text) {
-	fprintf(stdout,"{ CIRCUMFLEXEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_CIRCUMFLEXEQUAL;
 }
 
 yytoken_kind_t handle::LEFTSHIFTEQUAL(char* text) {
-	fprintf(stdout,"{ LEFTSHIFTEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_LEFTSHIFTEQUAL;
 }
 
 yytoken_kind_t handle::RIGHTSHIFTEQUAL(char* text) {
-	fprintf(stdout,"{ RIGHTSHIFTEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_RIGHTSHIFTEQUAL;
 }
 
 yytoken_kind_t handle::DOUBLESTAREQUAL(char* text) {
-	fprintf(stdout,"{ DOUBLESTAREQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_DOUBLESTAREQUAL;
 }
 
 yytoken_kind_t handle::DOUBLESLASH(char* text) {
-	fprintf(stdout,"{ DOUBLESLASH: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_DOUBLESLASH;
 }
 
 yytoken_kind_t handle::DOUBLESLASHEQUAL(char* text) {
-	fprintf(stdout,"{ DOUBLESLASHEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_DOUBLESLASHEQUAL;
 }
 
 yytoken_kind_t handle::ELLIPSIS(char* text) {
-	fprintf(stdout,"{ ELLIPSIS: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_ELLIPSIS;
 }
 
 yytoken_kind_t handle::RARROW(char* text) {
-	fprintf(stdout,"{ RARROW: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_RARROW;
 }
 
 yytoken_kind_t handle::AT(char* text) {
-	fprintf(stdout,"{ AT: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_AT;
 }
 
 yytoken_kind_t handle::ATEQUAL(char* text) {
-	fprintf(stdout,"{ ATEQUAL: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_ATEQUAL;
 }
 
 yytoken_kind_t handle::WHITESPACE(char* text) {
-	fprintf(stdout,"{ WHITESPACE: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_WHITESPACE;
 }
 
 yytoken_kind_t handle::COMMENT(char* text) {
-	fprintf(stdout,"{ COMMENT: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_COMMENT;
 }
 
 yytoken_kind_t handle::NAME(char* text) {
-	fprintf(stdout,"{ NAME: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_NAME;
 }
 
 yytoken_kind_t handle::HEX_NUMBER(char* text) {
-	fprintf(stdout,"{ HEX_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_HEX_NUMBER;
 }
 
 yytoken_kind_t handle::BIN_NUMBER(char* text) {
-	fprintf(stdout,"{ BIN_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_BIN_NUMBER;
 }
 
 yytoken_kind_t handle::OCT_NUMBER(char* text) {
-	fprintf(stdout,"{ OCT_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_OCT_NUMBER;
 }
 
 yytoken_kind_t handle::DEC_NUMBER(char* text) {
-	fprintf(stdout,"{ DEC_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_DEC_NUMBER;
 }
 
 yytoken_kind_t handle::FLOAT_NUMBER(char* text) {
-	fprintf(stdout,"{ FLOAT_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_FLOAT_NUMBER;
 }
 
 yytoken_kind_t handle::STRING(char* text) {
-	fprintf(stdout,"{ STRING: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_STRING;
 }
 
 yytoken_kind_t handle::YYEOF(char* text) {
-	fprintf(stdout,"{ YYEOF: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_YYEOF;
-}
-
-int main(int argc, char **argv, char **environv) {
-	while (yylex() != TOKEN_YYEOF)
-		continue;
-
-	return EXIT_SUCCESS;
 }

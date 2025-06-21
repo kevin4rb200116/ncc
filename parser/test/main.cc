@@ -1,8 +1,9 @@
 
+#include <cstdlib>
 #include "parser.hh"
 
 int main(int argc, char** argv, char** environv) {
-	yy::parser parse;
+	yyparse();
 
-	return parse.parse();
+	return EXIT_SUCCESS;
 }

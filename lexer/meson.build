@@ -1,21 +1,16 @@
 
-lexer_src = custom_target(
-  'lexer_src',
-  input: 'src/main.lxx',
-
-  output: [
-    'lexer.cc',
-    'flex_lexer.hh'],
-  depends: parser_src[0],
-  command: [flex,
-    '--outfile=@OUTPUT0@',
-    '--header-file=@OUTPUT1@',    
-    '@INPUT@'])
-
 lexer_obj = custom_target(
   'lexer_obj',
   output: 'lexer.cc.o',
   input: lexer_src[0],
+  depends: parser_src[1],
+  command: compile)
+
+lex_handle_obj = custom_target(
+  'lex_handle_obj',
+  output: 'lex_handle.cc.o',
+  input: 'src/lex_handle.cc',
+  depends: parser_src[1],
   command: compile)
 
 lexer_bin = custom_target(
