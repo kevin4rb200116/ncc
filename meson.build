@@ -42,7 +42,7 @@ BISONFLAGS = [
   # '-Wall,dangling-alias',
   # '--report=all',
   # '--no-lines',
-  # '-Wcounterexamples',
+  '-Wcounterexamples',
   '--verbose']
 
 compile = ['c++', CXXFLAGS, '-c', '-o', '@OUTPUT@', '@INPUT@']

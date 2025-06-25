@@ -4,236 +4,6 @@
 #include "lex_handle.hh"
 #include "lexer.hh"
 
-yytoken_kind_t handle::LPAR(char* text) {
-	fprintf(stdout,"{ LPAR: '%s' }\n", text);
-	return TOKEN_LPAR;
-}
-
-yytoken_kind_t handle::RPAR(char* text) {
-	fprintf(stdout,"{ RPAR: '%s' }\n", text);
-	return TOKEN_RPAR;
-}
-
-yytoken_kind_t handle::LSQB(char* text) {
-	fprintf(stdout,"{ LSQB: '%s' }\n", text);
-	return TOKEN_LSQB;
-}
-
-yytoken_kind_t handle::RSQB(char* text) {
-	fprintf(stdout,"{ RSQB: '%s' }\n", text);
-	return TOKEN_RSQB;
-}
-
-yytoken_kind_t handle::COLON(char* text) {
-	fprintf(stdout,"{ COLON: '%s' }\n", text);
-	return TOKEN_COLON;
-}
-
-yytoken_kind_t handle::COMMA(char* text) {
-	fprintf(stdout,"{ COMMA: '%s' }\n", text);
-	return TOKEN_COMMA;
-}
-
-yytoken_kind_t handle::SEMI(char* text) {
-	fprintf(stdout,"{ SEMI: '%s' }\n", text);
-	return TOKEN_SEMI;
-}
-
-yytoken_kind_t handle::PLUS(char* text) {
-	fprintf(stdout,"{ PLUS: '%s' }\n", text);
-	return TOKEN_PLUS;
-}
-
-yytoken_kind_t handle::MINUS(char* text) {
-	fprintf(stdout,"{ MINUS: '%s' }\n", text);
-	return TOKEN_MINUS;
-}
-
-yytoken_kind_t handle::STAR(char* text) {
-	fprintf(stdout,"{ STAR: '%s' }\n", text);
-	return TOKEN_STAR;
-}
-
-yytoken_kind_t handle::SLASH(char* text) {
-	fprintf(stdout,"{ SLASH: '%s' }\n", text);
-	return TOKEN_SLASH;
-}
-
-yytoken_kind_t handle::VBAR(char* text) {
-	fprintf(stdout,"{ VBAR: '%s' }\n", text);
-	return TOKEN_VBAR;
-}
-
-yytoken_kind_t handle::AMPER(char* text) {
-	fprintf(stdout,"{ AMPER: '%s' }\n", text);
-	return TOKEN_AMPER;
-}
-
-yytoken_kind_t handle::LESS(char* text) {
-	fprintf(stdout,"{ LESS: '%s' }\n", text);
-	return TOKEN_LESS;
-}
-
-yytoken_kind_t handle::GREATER(char* text) {
-	fprintf(stdout,"{ GREATER: '%s' }\n", text);
-	return TOKEN_GREATER;
-}
-
-yytoken_kind_t handle::EQUAL(char* text) {
-	fprintf(stdout,"{ EQUAL: '%s' }\n", text);
-	return TOKEN_EQUAL;
-}
-
-yytoken_kind_t handle::DOT(char* text) {
-	fprintf(stdout,"{ DOT: '%s' }\n", text);
-	return TOKEN_DOT;
-}
-
-yytoken_kind_t handle::PERCENT(char* text) {
-	fprintf(stdout,"{ PERCENT: '%s' }\n", text);
-	return TOKEN_PERCENT;
-}
-
-yytoken_kind_t handle::LBRACE(char* text) {
-	fprintf(stdout,"{ LBRACE: '%s' }\n", text);
-	return TOKEN_LBRACE;
-}
-
-yytoken_kind_t handle::RBRACE(char* text) {
-	fprintf(stdout,"{ RBRACE: '%s' }\n", text);
-	return TOKEN_RBRACE;
-}
-
-yytoken_kind_t handle::EQEQUAL(char* text) {
-	fprintf(stdout,"{ EQEQUAL: '%s' }\n", text);
-	return TOKEN_EQEQUAL;
-}
-
-yytoken_kind_t handle::NOTEQUAL(char* text) {
-	fprintf(stdout,"{ NOTEQUAL: '%s' }\n", text);
-	return TOKEN_NOTEQUAL;
-}
-
-yytoken_kind_t handle::LESSEQUAL(char* text) {
-	fprintf(stdout,"{ LESSEQUAL: '%s' }\n", text);
-	return TOKEN_LESSEQUAL;
-}
-
-yytoken_kind_t handle::GREATEREQUAL(char* text) {
-	fprintf(stdout,"{ GREATEREQUAL: '%s' }\n", text);
-	return TOKEN_GREATEREQUAL;
-}
-
-yytoken_kind_t handle::TILDE(char* text) {
-	fprintf(stdout,"{ TILDE: '%s' }\n", text);
-	return TOKEN_TILDE;
-}
-
-yytoken_kind_t handle::CIRCUMFLEX(char* text) {
-	fprintf(stdout,"{ CIRCUMFLEX: '%s' }\n", text);
-	return TOKEN_CIRCUMFLEX;
-}
-
-yytoken_kind_t handle::LEFTSHIFT(char* text) {
-	fprintf(stdout,"{ LEFTSHIFT: '%s' }\n", text);
-	return TOKEN_LEFTSHIFT;
-}
-
-yytoken_kind_t handle::RIGHTSHIFT(char* text) {
-	fprintf(stdout,"{ RIGHTSHIFT: '%s' }\n", text);
-	return TOKEN_RIGHTSHIFT;
-}
-
-yytoken_kind_t handle::DOUBLESTAR(char* text) {
-	fprintf(stdout,"{ DOUBLESTAR: '%s' }\n", text);
-	return TOKEN_DOUBLESTAR;
-}
-
-yytoken_kind_t handle::PLUSEQUAL(char* text) {
-	fprintf(stdout,"{ PLUSEQUAL: '%s' }\n", text);
-	return TOKEN_PLUSEQUAL;
-}
-
-yytoken_kind_t handle::MINEQUAL(char* text) {
-	fprintf(stdout,"{ MINEQUAL: '%s' }\n", text);
-	return TOKEN_MINEQUAL;
-}
-
-yytoken_kind_t handle::STAREQUAL(char* text) {
-	fprintf(stdout,"{ STAREQUAL: '%s' }\n", text);
-	return TOKEN_STAREQUAL;
-}
-
-yytoken_kind_t handle::SLASHEQUAL(char* text) {
-	fprintf(stdout,"{ SLASHEQUAL: '%s' }\n", text);
-	return TOKEN_SLASHEQUAL;
-}
-
-yytoken_kind_t handle::PERCENTEQUAL(char* text) {
-	fprintf(stdout,"{ PERCENTEQUAL: '%s' }\n", text);
-	return TOKEN_PERCENTEQUAL;
-}
-
-yytoken_kind_t handle::AMPEREQUAL(char* text) {
-	fprintf(stdout,"{ AMPEREQUAL: '%s' }\n", text);
-	return TOKEN_AMPEREQUAL;
-}
-
-yytoken_kind_t handle::VBAREQUAL(char* text) {
-	fprintf(stdout,"{ VBAREQUAL: '%s' }\n", text);
-	return TOKEN_VBAREQUAL;
-}
-
-yytoken_kind_t handle::CIRCUMFLEXEQUAL(char* text) {
-	fprintf(stdout,"{ CIRCUMFLEXEQUAL: '%s' }\n", text);
-	return TOKEN_CIRCUMFLEXEQUAL;
-}
-
-yytoken_kind_t handle::LEFTSHIFTEQUAL(char* text) {
-	fprintf(stdout,"{ LEFTSHIFTEQUAL: '%s' }\n", text);
-	return TOKEN_LEFTSHIFTEQUAL;
-}
-
-yytoken_kind_t handle::RIGHTSHIFTEQUAL(char* text) {
-	fprintf(stdout,"{ RIGHTSHIFTEQUAL: '%s' }\n", text);
-	return TOKEN_RIGHTSHIFTEQUAL;
-}
-
-yytoken_kind_t handle::DOUBLESTAREQUAL(char* text) {
-	fprintf(stdout,"{ DOUBLESTAREQUAL: '%s' }\n", text);
-	return TOKEN_DOUBLESTAREQUAL;
-}
-
-yytoken_kind_t handle::DOUBLESLASH(char* text) {
-	fprintf(stdout,"{ DOUBLESLASH: '%s' }\n", text);
-	return TOKEN_DOUBLESLASH;
-}
-
-yytoken_kind_t handle::DOUBLESLASHEQUAL(char* text) {
-	fprintf(stdout,"{ DOUBLESLASHEQUAL: '%s' }\n", text);
-	return TOKEN_DOUBLESLASHEQUAL;
-}
-
-yytoken_kind_t handle::ELLIPSIS(char* text) {
-	fprintf(stdout,"{ ELLIPSIS: '%s' }\n", text);
-	return TOKEN_ELLIPSIS;
-}
-
-yytoken_kind_t handle::RARROW(char* text) {
-	fprintf(stdout,"{ RARROW: '%s' }\n", text);
-	return TOKEN_RARROW;
-}
-
-yytoken_kind_t handle::AT(char* text) {
-	fprintf(stdout,"{ AT: '%s' }\n", text);
-	return TOKEN_AT;
-}
-
-yytoken_kind_t handle::ATEQUAL(char* text) {
-	fprintf(stdout,"{ ATEQUAL: '%s' }\n", text);
-	return TOKEN_ATEQUAL;
-}
-
 yytoken_kind_t handle::WHITESPACE(char* text) {
 	fprintf(stdout,"{ WHITESPACE: '%s' }\n", text);
 	return TOKEN_WHITESPACE;
@@ -279,14 +49,213 @@ yytoken_kind_t handle::STRING(char* text) {
 	return TOKEN_STRING;
 }
 
-yytoken_kind_t handle::YYEOF(char* text) {
-	fprintf(stdout,"{ YYEOF: '%s' }\n", text);
-	return TOKEN_YYEOF;
-}
-
 int main(int argc, char **argv, char **environv) {
-	while (yylex() != TOKEN_YYEOF)
-		continue;
+	yytoken_kind_t token =(yytoken_kind_t) yylex();
+
+	while (token != TOKEN_YYEOF) {
+		switch (token) {
+			case (TOKEN_LPAR):
+				fprintf(stdout, "{ LPAR }\n");
+				break;
+
+			case (TOKEN_RPAR):
+				fprintf(stdout, "{ RPAR }\n");
+				break;
+
+			case (TOKEN_LSQB):
+				fprintf(stdout, "{ LSQB }\n");
+				break;
+
+			case (TOKEN_RSQB):
+				fprintf(stdout, "{ RSQB }\n");
+				break;
+
+			case (TOKEN_COLON):
+				fprintf(stdout, "{ COLON }\n");
+				break;
+
+			case (TOKEN_COMMA):
+				fprintf(stdout, "{ COMMA }\n");
+				break;
+
+			case (TOKEN_SEMI):
+				fprintf(stdout, "{ SEMI }\n");
+				break;
+
+			case (TOKEN_PLUS):
+				fprintf(stdout, "{ PLUS }\n");
+				break;
+
+			case (TOKEN_MINUS):
+				fprintf(stdout, "{ MINUS }\n");
+				break;
+
+			case (TOKEN_STAR):
+				fprintf(stdout, "{ STAR }\n");
+				break;
+
+			case (TOKEN_SLASH):
+				fprintf(stdout, "{ SLASH }\n");
+				break;
+
+			case (TOKEN_VBAR):
+				fprintf(stdout, "{ VBAR }\n");
+				break;
+
+			case (TOKEN_AMPER):
+				fprintf(stdout, "{ AMPER }\n");
+				break;
+
+			case (TOKEN_LESS):
+				fprintf(stdout, "{ LESS }\n");
+				break;
+
+			case (TOKEN_GREATER):
+				fprintf(stdout, "{ GREATER }\n");
+				break;
+
+			case (TOKEN_EQUAL):
+				fprintf(stdout, "{ EQUAL }\n");
+				break;
+
+			case (TOKEN_DOT):
+				fprintf(stdout, "{ DOT }\n");
+				break;
+
+			case (TOKEN_PERCENT):
+				fprintf(stdout, "{ PERCENT }\n");
+				break;
+
+			case (TOKEN_LBRACE):
+				fprintf(stdout, "{ LBRACE }\n");
+				break;
+
+			case (TOKEN_RBRACE):
+				fprintf(stdout, "{ RBRACE }\n");
+				break;
+
+			case (TOKEN_EQEQUAL):
+				fprintf(stdout, "{ EQEQUAL }\n");
+				break;
+
+			case (TOKEN_NOTEQUAL):
+				fprintf(stdout, "{ NOTEQUAL }\n");
+				break;
+
+			case (TOKEN_LESSEQUAL):
+				fprintf(stdout, "{ LESSEQUAL }\n");
+				break;
+
+			case (TOKEN_GREATEREQUAL):
+				fprintf(stdout, "{ GREATEREQUAL }\n");
+				break;
+
+			case (TOKEN_TILDE):
+				fprintf(stdout, "{ TILDE }\n");
+				break;
+
+			case (TOKEN_CIRCUMFLEX):
+				fprintf(stdout, "{ CIRCUMFLEX }\n");
+				break;
+
+			case (TOKEN_LEFTSHIFT):
+				fprintf(stdout, "{ LEFTSHIFT }\n");
+				break;
+
+			case (TOKEN_RIGHTSHIFT):
+				fprintf(stdout, "{ RIGHTSHIFT }\n");
+				break;
+
+			case (TOKEN_DOUBLESTAR):
+				fprintf(stdout, "{ DOUBLESTAR }\n");
+				break;
+
+			case (TOKEN_PLUSEQUAL):
+				fprintf(stdout, "{ PLUSEQUAL }\n");
+				break;
+
+			case (TOKEN_MINEQUAL):
+				fprintf(stdout, "{ MINEQUAL }\n");
+				break;
+
+			case (TOKEN_STAREQUAL):
+				fprintf(stdout, "{ STAREQUAL }\n");
+				break;
+
+			case (TOKEN_SLASHEQUAL):
+				fprintf(stdout, "{ SLASHEQUAL }\n");
+				break;
+
+			case (TOKEN_PERCENTEQUAL):
+				fprintf(stdout, "{ PERCENTEQUAL }\n");
+				break;
+
+			case (TOKEN_AMPEREQUAL):
+				fprintf(stdout, "{ AMPEREQUAL }\n");
+				break;
+
+			case (TOKEN_VBAREQUAL):
+				fprintf(stdout, "{ VBAREQUAL }\n");
+				break;
+
+			case (TOKEN_CIRCUMFLEXEQUAL):
+				fprintf(stdout, "{ CIRCUMFLEXEQUAL }\n");
+				break;
+
+			case (TOKEN_LEFTSHIFTEQUAL):
+				fprintf(stdout, "{ LEFTSHIFTEQUAL }\n");
+				break;
+
+			case (TOKEN_RIGHTSHIFTEQUAL):
+				fprintf(stdout, "{ RIGHTSHIFTEQUAL }\n");
+				break;
+
+			case (TOKEN_DOUBLESTAREQUAL):
+				fprintf(stdout, "{ DOUBLESTAREQUAL }\n");
+				break;
+
+			case (TOKEN_DOUBLESLASH):
+				fprintf(stdout, "{ DOUBLESLASH }\n");
+				break;
+
+			case (TOKEN_DOUBLESLASHEQUAL):
+				fprintf(stdout, "{ DOUBLESLASHEQUAL }\n");
+				break;
+
+			case (TOKEN_ELLIPSIS):
+				fprintf(stdout, "{ ELLIPSIS }\n");
+				break;
+
+			case (TOKEN_RARROW):
+				fprintf(stdout, "{ RARROW }\n");
+				break;
+
+			case (TOKEN_AT):
+				fprintf(stdout, "{ AT }\n");
+				break;
+
+			case (TOKEN_ATEQUAL):
+				fprintf(stdout, "{ ATEQUAL }\n");
+				break;
+
+			case (TOKEN_DEF):
+				fprintf(stdout, "{ DEF }\n");
+				break;
+
+			case (TOKEN_EXTERN):
+				fprintf(stdout, "{ EXTERN }\n");
+				break;
+
+			case (TOKEN_YYEOF):
+				fprintf(stdout, "{ YYEOF }\n");
+				break;
+
+			default:
+				break;
+		}
+
+		token =(yytoken_kind_t) yylex();
+	}
 
 	return EXIT_SUCCESS;
 }

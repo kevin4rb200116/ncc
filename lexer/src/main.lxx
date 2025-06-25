@@ -12,73 +12,79 @@ COMMENT      #[^\r\n]*
 WHITESPACE   [ \f\t]+
 NAME         [_a-zA-Z][_a-zA-Z0-9]*
 
-HEX_NUMBER   0[xX](?:_?[0-9a-fA-F])+
 BIN_NUMBER   0[bB](?:_?[01])+
 OCT_NUMBER   0[oO](?:_?[0-7])+
-
 DEC_NUMBER   (?:0(?:_?0)*|[1-9](?:_?[0-9])*)
+HEX_NUMBER   0[xX](?:_?[0-9a-fA-F])+
 FLOAT_NUMBER ([0-9](?:_?[0-9])*\.(?:[0-9](?:_?[0-9])*)?|\.[0-9](?:_?[0-9])*)
 
 STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 
 %% /* ================================= Begin ============================== */
 
-"("            return handle::LPAR(yytext);
-")"            return handle::RPAR(yytext);
-"["            return handle::LSQB(yytext);
-"]"            return handle::RSQB(yytext);
-":"            return handle::COLON(yytext);
-","            return handle::COMMA(yytext);
-";"            return handle::SEMI(yytext);
-"+"            return handle::PLUS(yytext);
-"-"            return handle::MINUS(yytext);
-"*"            return handle::STAR(yytext);
-"/"            return handle::SLASH(yytext);
-"|"            return handle::VBAR(yytext);
-"&"            return handle::AMPER(yytext);
-"<"            return handle::LESS(yytext);
-">"            return handle::GREATER(yytext);
-"="            return handle::EQUAL(yytext);
-"."            return handle::DOT(yytext);
-"%"            return handle::PERCENT(yytext);
-"{"            return handle::LBRACE(yytext);
-"}"            return handle::RBRACE(yytext);
-"=="           return handle::EQEQUAL(yytext);
-"!="           return handle::NOTEQUAL(yytext);
-"<="           return handle::LESSEQUAL(yytext);
-">="           return handle::GREATEREQUAL(yytext);
-"~"            return handle::TILDE(yytext);
-"^"            return handle::CIRCUMFLEX(yytext);
-"<<"           return handle::LEFTSHIFT(yytext);
-">>"           return handle::RIGHTSHIFT(yytext);
-"**"           return handle::DOUBLESTAR(yytext);
-"+="           return handle::PLUSEQUAL(yytext);
-"-="           return handle::MINEQUAL(yytext);
-"*="           return handle::STAREQUAL(yytext);
-"/="           return handle::SLASHEQUAL(yytext);
-"%="           return handle::PERCENTEQUAL(yytext);
-"&="           return handle::AMPEREQUAL(yytext);
-"|="           return handle::VBAREQUAL(yytext);
-"^="           return handle::CIRCUMFLEXEQUAL(yytext);
-"<<="          return handle::LEFTSHIFTEQUAL(yytext);
-">>="          return handle::RIGHTSHIFTEQUAL(yytext);
-"**="          return handle::DOUBLESTAREQUAL(yytext);
-"//"           return handle::DOUBLESLASH(yytext);
-"//="          return handle::DOUBLESLASHEQUAL(yytext);
-"..."          return handle::ELLIPSIS(yytext);
-"->"           return handle::RARROW(yytext);
-"@"            return handle::AT(yytext);
-"@="           return handle::ATEQUAL(yytext);
-{WHITESPACE}   return handle::WHITESPACE(yytext);
+"("            return TOKEN_LPAR;
+")"            return TOKEN_RPAR;
+"["            return TOKEN_LSQB;
+"]"            return TOKEN_RSQB;
+":"            return TOKEN_COLON;
+","            return TOKEN_COMMA;
+";"            return TOKEN_SEMI;
+"+"            return TOKEN_PLUS;
+"-"            return TOKEN_MINUS;
+"*"            return TOKEN_STAR;
+"/"            return TOKEN_SLASH;
+"|"            return TOKEN_VBAR;
+"&"            return TOKEN_AMPER;
+"<"            return TOKEN_LESS;
+">"            return TOKEN_GREATER;
+"="            return TOKEN_EQUAL;
+"."            return TOKEN_DOT;
+"%"            return TOKEN_PERCENT;
+"{"            return TOKEN_LBRACE;
+"}"            return TOKEN_RBRACE;
+"=="           return TOKEN_EQEQUAL;
+"!="           return TOKEN_NOTEQUAL;
+"<="           return TOKEN_LESSEQUAL;
+">="           return TOKEN_GREATEREQUAL;
+"~"            return TOKEN_TILDE;
+"^"            return TOKEN_CIRCUMFLEX;
+"<<"           return TOKEN_LEFTSHIFT;
+">>"           return TOKEN_RIGHTSHIFT;
+"**"           return TOKEN_DOUBLESTAR;
+"+="           return TOKEN_PLUSEQUAL;
+"-="           return TOKEN_MINEQUAL;
+"*="           return TOKEN_STAREQUAL;
+"/="           return TOKEN_SLASHEQUAL;
+"%="           return TOKEN_PERCENTEQUAL;
+"&="           return TOKEN_AMPEREQUAL;
+"|="           return TOKEN_VBAREQUAL;
+"^="           return TOKEN_CIRCUMFLEXEQUAL;
+"<<="          return TOKEN_LEFTSHIFTEQUAL;
+">>="          return TOKEN_RIGHTSHIFTEQUAL;
+"**="          return TOKEN_DOUBLESTAREQUAL;
+"//"           return TOKEN_DOUBLESLASH;
+"//="          return TOKEN_DOUBLESLASHEQUAL;
+"..."          return TOKEN_ELLIPSIS;
+"->"           return TOKEN_RARROW;
+"@"            return TOKEN_AT;
+"@="           return TOKEN_ATEQUAL;
+
+"def"          return TOKEN_DEF;
+"extern"       return TOKEN_EXTERN;
+
+{WHITESPACE}   /* return handle::WHITESPACE(yytext); */
 {COMMENT}      return handle::COMMENT(yytext);
 {NAME}         return handle::NAME(yytext);
-{HEX_NUMBER}   return handle::HEX_NUMBER(yytext);
 {BIN_NUMBER}   return handle::BIN_NUMBER(yytext);
 {OCT_NUMBER}   return handle::OCT_NUMBER(yytext);
 {DEC_NUMBER}   return handle::DEC_NUMBER(yytext);
+{HEX_NUMBER}   return handle::HEX_NUMBER(yytext);
 {FLOAT_NUMBER} return handle::FLOAT_NUMBER(yytext);
 {STRING}       return handle::STRING(yytext);
-<<EOF>>        return handle::YYEOF(yytext);
+
+.              /* ignore */
+
+<<EOF>>        return TOKEN_YYEOF;
 
 %% /* ================================= End ============================== */
 

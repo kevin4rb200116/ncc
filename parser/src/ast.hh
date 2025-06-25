@@ -19,7 +19,7 @@ namespace ast {
 	using std::move;
 	using std::vector;
 	using std::map;
-	
+
 	class Expression {
 		public:
 			virtual ~Expression() = default;
@@ -28,15 +28,19 @@ namespace ast {
 	class Number : public Expression {
 		public:
 			typedef enum Kind {
-				HEX_NUMBER,
 				BIN_NUMBER,
 				OCT_NUMBER,
 				DEC_NUMBER,
+				HEX_NUMBER,
 				FLOAT_NUMBER
 			}Kind;
 
 			Number(string value, Kind kind)
 				: value(value), kind(kind) {}
+
+			string &getValue() {
+				return value;
+			}
 
 		private:
 			string value;
@@ -71,21 +75,21 @@ namespace ast {
 		vector<Expression*> args;
 
 		public:
-			Call(const string callee, vector<Expression*> args)
-			  : callee(callee), args(args) {}
-		
+			Call(const string callee, vector<Expression*>* args)
+			  : callee(callee), args(*args) {}
+
 			~Call() {
 				args.clear();
 			}
 	};
-	
+
 	class Prototype {
 		string name;
 		vector<string> args;
 
 		public:
-			Prototype(const string name, vector<string> args)
-				: name(name), args(args) {}
+			Prototype(const string name, vector<string>* args)
+				: name(name), args(*args) {}
 
 			~Prototype() {
 				args.clear();
@@ -102,7 +106,7 @@ namespace ast {
 			Function(Prototype *prototype,
 				       Expression *body)
 				: prototype(prototype), body(body) {}
-			
+
 			~Function() {
 				delete prototype;
 				delete body;
