@@ -26,6 +26,6 @@
 		"variant": "cpp",
 		"algorithm": "cpp"
 	},
-	"C_Cpp.default.compileCommands": "/home/adrian/Workspace/Coding/CompilersDev/ncc/debug/compile_commands.json",
+	"C_Cpp.default.compileCommands": "/home/adrian/Descargas/Codigo/ncc/debug/compile_commands.json",
 	"C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }

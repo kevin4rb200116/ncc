@@ -1,27 +1,45 @@
 
-parser_obj = custom_target(
-  'parser_obj',
-  output: 'parser.cc.o',
-  input: parser_src[0],
-  depends: lexer_obj[0],
-  command: compile)
+parser_src = custom_target(
+  'parser_src',
+  input: 'src/main.yxx',
+  depends: lexer_src[1],
 
-parser_bin = custom_target(
-  'parser',
-  output: 'parser',
-  input: [
-    lexer_obj[0],
-    lex_handle_obj,
-    parser_obj[0], 
-    custom_target(
-      'ast',
-      output: 'ast.cc.o',
-      input: 'src/ast.cc',
-      command: compile),
-    custom_target(
-      'parser_main',
-      output: 'main.cc.o',
-      input: 'test/main.cc',
-      depends: parser_obj,
-      command: compile)],
-  command: link)
+  output: [
+    'parser.cc',
+    'parser.hh',
+    'parser.gv',
+    'parser.html',
+    'parser.xml',
+    'parser.output',
+    'location.hh'],
+  
+  command: [
+    bison,
+    BISONFLAGS,
+    '--output=@OUTPUT0@',
+    '--header=@OUTPUT1@',
+    '--graph=@OUTPUT2@',
+    '--html=@OUTPUT3@',
+    '--xml=@OUTPUT4@',
+    '@INPUT@'])
+
+libnparse = static_library(
+  'nparse',
+  [
+    parser_src[0],
+    'src/handle.cc'],
+  dependencies: [llvm],
+  include_directories: [
+    '../lexer/src',
+    lexer_inc,
+    'src',
+    'test'])
+
+executable(
+  'nparse',
+  ['test/main.cc'],
+  dependencies: [llvm],
+  link_with: [libnparse, libnlex],
+  include_directories: [
+    'src',
+    'test'])

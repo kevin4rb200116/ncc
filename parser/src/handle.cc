@@ -1,366 +1,245 @@
 
-#include <cstdio>
-
 #include "lexer.hh"
-
-#define YYTOKENTYPE 1
-typedef enum : int {
-	TOKEN_LPAR,
-	TOKEN_RPAR,
-	TOKEN_LSQB,
-	TOKEN_RSQB,
-	TOKEN_COLON,
-	TOKEN_COMMA,
-	TOKEN_SEMI,
-	TOKEN_PLUS,
-	TOKEN_MINUS,
-	TOKEN_STAR,
-	TOKEN_SLASH,
-	TOKEN_VBAR,
-	TOKEN_AMPER,
-	TOKEN_LESS,
-	TOKEN_GREATER,
-	TOKEN_EQUAL,
-	TOKEN_DOT,
-	TOKEN_PERCENT,
-	TOKEN_LBRACE,
-	TOKEN_RBRACE,
-	TOKEN_EQEQUAL,
-	TOKEN_NOTEQUAL,
-	TOKEN_LESSEQUAL,
-	TOKEN_GREATEREQUAL,
-	TOKEN_TILDE,
-	TOKEN_CIRCUMFLEX,
-	TOKEN_LEFTSHIFT,
-	TOKEN_RIGHTSHIFT,
-	TOKEN_DOUBLESTAR,
-	TOKEN_PLUSEQUAL,
-	TOKEN_MINEQUAL,
-	TOKEN_STAREQUAL,
-	TOKEN_SLASHEQUAL,
-	TOKEN_PERCENTEQUAL,
-	TOKEN_AMPEREQUAL,
-	TOKEN_VBAREQUAL,
-	TOKEN_CIRCUMFLEXEQUAL,
-	TOKEN_LEFTSHIFTEQUAL,
-	TOKEN_RIGHTSHIFTEQUAL,
-	TOKEN_DOUBLESTAREQUAL,
-	TOKEN_DOUBLESLASH,
-	TOKEN_DOUBLESLASHEQUAL,
-	TOKEN_ELLIPSIS,
-	TOKEN_RARROW,
-	TOKEN_AT,
-	TOKEN_ATEQUAL,
-	TOKEN_DEF,
-	TOKEN_EXTERN,
-	TOKEN_WHITESPACE,
-	TOKEN_COMMENT,
-	TOKEN_NAME,
-	TOKEN_BIN_NUMBER,
-	TOKEN_OCT_NUMBER,
-	TOKEN_DEC_NUMBER,
-	TOKEN_HEX_NUMBER,
-	TOKEN_FLOAT_NUMBER,
-	TOKEN_STRING,
-	TOKEN_YYEOF,
-} yytoken_kind_t;
-
+#include "parser.hh"
 #include "handle.hh"
 
 yytoken_kind_t handle::LPAR() {
-	fprintf(stdout, "{ LPAR }\n");
 	return TOKEN_LPAR;
 }
 
 yytoken_kind_t handle::RPAR() {
-	fprintf(stdout, "{ RPAR }\n");
 	return TOKEN_RPAR;
 }
 
 yytoken_kind_t handle::LSQB() {
-	fprintf(stdout, "{ LSQB }\n");
 	return TOKEN_LSQB;
 }
 
 yytoken_kind_t handle::RSQB() {
-	fprintf(stdout, "{ RSQB }\n");
 	return TOKEN_RSQB;
 }
 
 yytoken_kind_t handle::COLON() {
-	fprintf(stdout, "{ COLON }\n");
 	return TOKEN_COLON;
 }
 
 yytoken_kind_t handle::COMMA() {
-	fprintf(stdout, "{ COMMA }\n");
 	return TOKEN_COMMA;
 }
 
 yytoken_kind_t handle::SEMI() {
-	fprintf(stdout, "{ SEMI }\n");
 	return TOKEN_SEMI;
 }
 
 yytoken_kind_t handle::PLUS() {
-	fprintf(stdout, "{ PLUS }\n");
 	return TOKEN_PLUS;
 }
 
 yytoken_kind_t handle::MINUS() {
-	fprintf(stdout, "{ MINUS }\n");
 	return TOKEN_MINUS;
 }
 
 yytoken_kind_t handle::STAR() {
-	fprintf(stdout, "{ STAR }\n");
 	return TOKEN_STAR;
 }
 
 yytoken_kind_t handle::SLASH() {
-	fprintf(stdout, "{ SLASH }\n");
 	return TOKEN_SLASH;
 }
 
 yytoken_kind_t handle::VBAR() {
-	fprintf(stdout, "{ VBAR }\n");
 	return TOKEN_VBAR;
 }
 
 yytoken_kind_t handle::AMPER() {
-	fprintf(stdout, "{ AMPER }\n");
 	return TOKEN_AMPER;
 }
 
 yytoken_kind_t handle::LESS() {
-	fprintf(stdout, "{ LESS }\n");
 	return TOKEN_LESS;
 }
 
 yytoken_kind_t handle::GREATER() {
-	fprintf(stdout, "{ GREATER }\n");
 	return TOKEN_GREATER;
 }
 
 yytoken_kind_t handle::EQUAL() {
-	fprintf(stdout, "{ EQUAL }\n");
 	return TOKEN_EQUAL;
 }
 
 yytoken_kind_t handle::DOT() {
-	fprintf(stdout, "{ DOT }\n");
 	return TOKEN_DOT;
 }
 
 yytoken_kind_t handle::PERCENT() {
-	fprintf(stdout, "{ PERCENT }\n");
 	return TOKEN_PERCENT;
 }
 
 yytoken_kind_t handle::LBRACE() {
-	fprintf(stdout, "{ LBRACE }\n");
 	return TOKEN_LBRACE;
 }
 
 yytoken_kind_t handle::RBRACE() {
-	fprintf(stdout, "{ RBRACE }\n");
 	return TOKEN_RBRACE;
 }
 
 yytoken_kind_t handle::EQEQUAL() {
-	fprintf(stdout, "{ EQEQUAL }\n");
 	return TOKEN_EQEQUAL;
 }
 
 yytoken_kind_t handle::NOTEQUAL() {
-	fprintf(stdout, "{ NOTEQUAL }\n");
 	return TOKEN_NOTEQUAL;
 }
 
 yytoken_kind_t handle::LESSEQUAL() {
-	fprintf(stdout, "{ LESSEQUAL }\n");
 	return TOKEN_LESSEQUAL;
 }
 
 yytoken_kind_t handle::GREATEREQUAL() {
-	fprintf(stdout, "{ GREATEREQUAL }\n");
 	return TOKEN_GREATEREQUAL;
 }
 
 yytoken_kind_t handle::TILDE() {
-	fprintf(stdout, "{ TILDE }\n");
 	return TOKEN_TILDE;
 }
 
 yytoken_kind_t handle::CIRCUMFLEX() {
-	fprintf(stdout, "{ CIRCUMFLEX }\n");
 	return TOKEN_CIRCUMFLEX;
 }
 
 yytoken_kind_t handle::LEFTSHIFT() {
-	fprintf(stdout, "{ LEFTSHIFT }\n");
 	return TOKEN_LEFTSHIFT;
 }
 
 yytoken_kind_t handle::RIGHTSHIFT() {
-	fprintf(stdout, "{ RIGHTSHIFT }\n");
 	return TOKEN_RIGHTSHIFT;
 }
 
 yytoken_kind_t handle::DOUBLESTAR() {
-	fprintf(stdout, "{ DOUBLESTAR }\n");
 	return TOKEN_DOUBLESTAR;
 }
 
 yytoken_kind_t handle::PLUSEQUAL() {
-	fprintf(stdout, "{ PLUSEQUAL }\n");
 	return TOKEN_PLUSEQUAL;
 }
 
 yytoken_kind_t handle::MINEQUAL() {
-	fprintf(stdout, "{ MINEQUAL }\n");
 	return TOKEN_MINEQUAL;
 }
 
 yytoken_kind_t handle::STAREQUAL() {
-	fprintf(stdout, "{ STAREQUAL }\n");
 	return TOKEN_STAREQUAL;
 }
 
 yytoken_kind_t handle::SLASHEQUAL() {
-	fprintf(stdout, "{ SLASHEQUAL }\n");
 	return TOKEN_SLASHEQUAL;
 }
 
 yytoken_kind_t handle::PERCENTEQUAL() {
-	fprintf(stdout, "{ PERCENTEQUAL }\n");
 	return TOKEN_PERCENTEQUAL;
 }
 
 yytoken_kind_t handle::AMPEREQUAL() {
-	fprintf(stdout, "{ AMPEREQUAL }\n");
 	return TOKEN_AMPEREQUAL;
 }
 
 yytoken_kind_t handle::VBAREQUAL() {
-	fprintf(stdout, "{ VBAREQUAL }\n");
 	return TOKEN_VBAREQUAL;
 }
 
 yytoken_kind_t handle::CIRCUMFLEXEQUAL() {
-	fprintf(stdout, "{ CIRCUMFLEXEQUAL }\n");
 	return TOKEN_CIRCUMFLEXEQUAL;
 }
 
 yytoken_kind_t handle::LEFTSHIFTEQUAL() {
-	fprintf(stdout, "{ LEFTSHIFTEQUAL }\n");
 	return TOKEN_LEFTSHIFTEQUAL;
 }
 
 yytoken_kind_t handle::RIGHTSHIFTEQUAL() {
-	fprintf(stdout, "{ RIGHTSHIFTEQUAL }\n");
 	return TOKEN_RIGHTSHIFTEQUAL;
 }
 
 yytoken_kind_t handle::DOUBLESTAREQUAL() {
-	fprintf(stdout, "{ DOUBLESTAREQUAL }\n");
 	return TOKEN_DOUBLESTAREQUAL;
 }
 
 yytoken_kind_t handle::DOUBLESLASH() {
-	fprintf(stdout, "{ DOUBLESLASH }\n");
 	return TOKEN_DOUBLESLASH;
 }
 
 yytoken_kind_t handle::DOUBLESLASHEQUAL() {
-	fprintf(stdout, "{ DOUBLESLASHEQUAL }\n");
 	return TOKEN_DOUBLESLASHEQUAL;
 }
 
 yytoken_kind_t handle::ELLIPSIS() {
-	fprintf(stdout, "{ ELLIPSIS }\n");
 	return TOKEN_ELLIPSIS;
 }
 
 yytoken_kind_t handle::RARROW() {
-	fprintf(stdout, "{ RARROW }\n");
 	return TOKEN_RARROW;
 }
 
 yytoken_kind_t handle::AT() {
-	fprintf(stdout, "{ AT }\n");
 	return TOKEN_AT;
 }
 
 yytoken_kind_t handle::ATEQUAL() {
-	fprintf(stdout, "{ ATEQUAL }\n");
 	return TOKEN_ATEQUAL;
 }
 
 yytoken_kind_t handle::WHITESPACE(const char* text) {
-	fprintf(stdout,"{ WHITESPACE: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_WHITESPACE;
 }
 
 yytoken_kind_t handle::COMMENT(const char* text) {
-	fprintf(stdout,"{ COMMENT: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_COMMENT;
 }
 
 yytoken_kind_t handle::NAME(const char* text) {
-	fprintf(stdout,"{ NAME: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_NAME;
 }
 
 yytoken_kind_t handle::HEX_NUMBER(const char* text) {
-	fprintf(stdout,"{ HEX_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_HEX_NUMBER;
 }
 
 yytoken_kind_t handle::BIN_NUMBER(const char* text) {
-	fprintf(stdout,"{ BIN_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_BIN_NUMBER;
 }
 
 yytoken_kind_t handle::OCT_NUMBER(const char* text) {
-	fprintf(stdout,"{ OCT_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_OCT_NUMBER;
 }
 
 yytoken_kind_t handle::DEC_NUMBER(const char* text) {
-	fprintf(stdout,"{ DEC_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_DEC_NUMBER;
 }
 
 yytoken_kind_t handle::FLOAT_NUMBER(const char* text) {
-	fprintf(stdout,"{ FLOAT_NUMBER: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_FLOAT_NUMBER;
 }
 
 yytoken_kind_t handle::STRING(const char* text) {
-	fprintf(stdout,"{ STRING: '%s' }\n", text);
+	yylval.cstring = yytext;
 	return TOKEN_STRING;
 }
 
 yytoken_kind_t handle::DEF() {
-	fprintf(stdout, "{ DEF }\n");
 	return TOKEN_DEF;
 }
 
 yytoken_kind_t handle::EXTERN() {
-	fprintf(stdout, "{ EXTERN }\n");
 	return TOKEN_EXTERN;
 }
 
 yytoken_kind_t handle::YYEOF() {
-	fprintf(stdout, "{ YYEOF }\n");
 	return TOKEN_YYEOF;
-}
-
-int main() {
-
-	while (yylex() != TOKEN_YYEOF)
-		continue;
-
-	return EXIT_SUCCESS;
 }

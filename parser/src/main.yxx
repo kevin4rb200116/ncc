@@ -1,14 +1,12 @@
 
 %require "3.8.2"
 %header
-%locations
 
 %{
   #include <string>
   #include <vector>
 
   #include "ast.hh"
-  #include "parser.hh"
   #include "lexer.hh"
 
   using std::string;
@@ -76,7 +74,7 @@
 //token
 
 %token <cstring>
-  // WHITESPACE
+  WHITESPACE
   COMMENT
   NAME
   HEX_NUMBER
@@ -317,11 +315,12 @@ number[expr]:
 int yyerror(const char *msg) {
 	fprintf(
 		stderr,
-		"Error %d.%d-%d.%d: %s\n",
-		yylloc.first_line,
-		yylloc.first_column,
-		yylloc.last_line,
-		yylloc.last_column,
+    "Error: %s\n",
+		// "Error %d.%d-%d.%d: %s\n",
+		// yylloc.first_line,
+		// yylloc.first_column,
+		// yylloc.last_line,
+		// yylloc.last_column,
 		msg
 	);
 

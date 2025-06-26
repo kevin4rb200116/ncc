@@ -1,11 +1,8 @@
 
-%option 8bit
-%option yylineno
-%option noyywrap nounput
-%option nounistd always-interactive
+%option yylineno noyywrap nounput nounistd always-interactive
 
 %{
-	#include "lex_handle.hh"
+	#include "handle.hh"
 %}
 
 COMMENT      #[^\r\n]*
@@ -22,57 +19,57 @@ STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 
 %% /* ================================= Begin ============================== */
 
-"("            return TOKEN_LPAR;
-")"            return TOKEN_RPAR;
-"["            return TOKEN_LSQB;
-"]"            return TOKEN_RSQB;
-":"            return TOKEN_COLON;
-","            return TOKEN_COMMA;
-";"            return TOKEN_SEMI;
-"+"            return TOKEN_PLUS;
-"-"            return TOKEN_MINUS;
-"*"            return TOKEN_STAR;
-"/"            return TOKEN_SLASH;
-"|"            return TOKEN_VBAR;
-"&"            return TOKEN_AMPER;
-"<"            return TOKEN_LESS;
-">"            return TOKEN_GREATER;
-"="            return TOKEN_EQUAL;
-"."            return TOKEN_DOT;
-"%"            return TOKEN_PERCENT;
-"{"            return TOKEN_LBRACE;
-"}"            return TOKEN_RBRACE;
-"=="           return TOKEN_EQEQUAL;
-"!="           return TOKEN_NOTEQUAL;
-"<="           return TOKEN_LESSEQUAL;
-">="           return TOKEN_GREATEREQUAL;
-"~"            return TOKEN_TILDE;
-"^"            return TOKEN_CIRCUMFLEX;
-"<<"           return TOKEN_LEFTSHIFT;
-">>"           return TOKEN_RIGHTSHIFT;
-"**"           return TOKEN_DOUBLESTAR;
-"+="           return TOKEN_PLUSEQUAL;
-"-="           return TOKEN_MINEQUAL;
-"*="           return TOKEN_STAREQUAL;
-"/="           return TOKEN_SLASHEQUAL;
-"%="           return TOKEN_PERCENTEQUAL;
-"&="           return TOKEN_AMPEREQUAL;
-"|="           return TOKEN_VBAREQUAL;
-"^="           return TOKEN_CIRCUMFLEXEQUAL;
-"<<="          return TOKEN_LEFTSHIFTEQUAL;
-">>="          return TOKEN_RIGHTSHIFTEQUAL;
-"**="          return TOKEN_DOUBLESTAREQUAL;
-"//"           return TOKEN_DOUBLESLASH;
-"//="          return TOKEN_DOUBLESLASHEQUAL;
-"..."          return TOKEN_ELLIPSIS;
-"->"           return TOKEN_RARROW;
-"@"            return TOKEN_AT;
-"@="           return TOKEN_ATEQUAL;
+"("            return handle::LPAR();
+")"            return handle::RPAR();
+"["            return handle::LSQB();
+"]"            return handle::RSQB();
+":"            return handle::COLON();
+","            return handle::COMMA();
+";"            return handle::SEMI();
+"+"            return handle::PLUS();
+"-"            return handle::MINUS();
+"*"            return handle::STAR();
+"/"            return handle::SLASH();
+"|"            return handle::VBAR();
+"&"            return handle::AMPER();
+"<"            return handle::LESS();
+">"            return handle::GREATER();
+"="            return handle::EQUAL();
+"."            return handle::DOT();
+"%"            return handle::PERCENT();
+"{"            return handle::LBRACE();
+"}"            return handle::RBRACE();
+"=="           return handle::EQEQUAL();
+"!="           return handle::NOTEQUAL();
+"<="           return handle::LESSEQUAL();
+">="           return handle::GREATEREQUAL();
+"~"            return handle::TILDE();
+"^"            return handle::CIRCUMFLEX();
+"<<"           return handle::LEFTSHIFT();
+">>"           return handle::RIGHTSHIFT();
+"**"           return handle::DOUBLESTAR();
+"+="           return handle::PLUSEQUAL();
+"-="           return handle::MINEQUAL();
+"*="           return handle::STAREQUAL();
+"/="           return handle::SLASHEQUAL();
+"%="           return handle::PERCENTEQUAL();
+"&="           return handle::AMPEREQUAL();
+"|="           return handle::VBAREQUAL();
+"^="           return handle::CIRCUMFLEXEQUAL();
+"<<="          return handle::LEFTSHIFTEQUAL();
+">>="          return handle::RIGHTSHIFTEQUAL();
+"**="          return handle::DOUBLESTAREQUAL();
+"//"           return handle::DOUBLESLASH();
+"//="          return handle::DOUBLESLASHEQUAL();
+"..."          return handle::ELLIPSIS();
+"->"           return handle::RARROW();
+"@"            return handle::AT();
+"@="           return handle::ATEQUAL();
 
-"def"          return TOKEN_DEF;
-"extern"       return TOKEN_EXTERN;
+"def"          return handle::DEF();
+"extern"       return handle::EXTERN();
 
-{WHITESPACE}   /* return handle::WHITESPACE(yytext); */
+{WHITESPACE}   return handle::WHITESPACE(yytext);
 {COMMENT}      return handle::COMMENT(yytext);
 {NAME}         return handle::NAME(yytext);
 {BIN_NUMBER}   return handle::BIN_NUMBER(yytext);
@@ -84,6 +81,6 @@ STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 
 .              /* ignore */
 
-<<EOF>>        return TOKEN_YYEOF;
+<<EOF>>        return handle::YYEOF();
 
 %% /* ================================= End ============================== */
