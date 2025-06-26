@@ -87,8 +87,3 @@ STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 <<EOF>>        return TOKEN_YYEOF;
 
 %% /* ================================= End ============================== */
-
-int yyerror(const char *msg) {
-	fprintf(stderr, "Error: %s\n", msg);
-	return 0;
-}

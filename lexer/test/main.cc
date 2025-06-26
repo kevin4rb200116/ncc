@@ -4,10 +4,10 @@
 #include "lex_handle.hh"
 #include "lexer.hh"
 
-yytoken_kind_t handle::WHITESPACE(char* text) {
+/* yytoken_kind_t handle::WHITESPACE(char* text) {
 	fprintf(stdout,"{ WHITESPACE: '%s' }\n", text);
 	return TOKEN_WHITESPACE;
-}
+} */
 
 yytoken_kind_t handle::COMMENT(char* text) {
 	fprintf(stdout,"{ COMMENT: '%s' }\n", text);

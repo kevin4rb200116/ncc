@@ -1,6 +1,7 @@
 
 %require "3.8.2"
 %header
+%locations
 
 %{
   #include <string>
@@ -196,8 +197,6 @@ expression[expr]:
       (ast::Expression*) $lhs,
       (ast::Expression*) $rhs
     );
-
-    printf("a binary +\n");
   }
 
   | expression[lhs] MINUS primary[rhs] {
@@ -206,8 +205,6 @@ expression[expr]:
       (ast::Expression*) $lhs,
       (ast::Expression*) $rhs
     );
-
-    printf("a binary -\n");
   }
 
   | expression[lhs] STAR primary[rhs] {
@@ -216,8 +213,6 @@ expression[expr]:
       (ast::Expression*) $lhs,
       (ast::Expression*) $rhs
     );
-
-    printf("a binary *\n");
   }
 
   | expression[lhs] SLASH primary[rhs] {
@@ -226,8 +221,6 @@ expression[expr]:
       (ast::Expression*) $lhs,
       (ast::Expression*) $rhs
     );
-
-    printf("a binary /\n");
   }
 
   ;
@@ -239,8 +232,6 @@ primary[expr]:
 
   | LPAR expression[pexpr] RPAR {
     $expr = $pexpr;
-
-    printf("a paren expr\n");
   }
 
   ;
@@ -265,8 +256,6 @@ call_args[expr]:
 name[expr]:
     NAME[str] {
       $expr = (void*) new ast::Variable(string($str));
-
-      printf("a Variable\n");
     }
 
   | NAME[str] LPAR call_args[args] RPAR {
@@ -274,8 +263,6 @@ name[expr]:
       string($str),
       (vector<ast::Expression*>*) $args
     );
-
-    printf("a CALL with args\n");
   }
 
   | NAME[str] LPAR RPAR {
@@ -283,8 +270,6 @@ name[expr]:
       string($str),
       new vector<ast::Expression*>()
     );
-
-    printf("a CALL\n");
   }
 
   ;
@@ -295,8 +280,6 @@ number[expr]:
         string($str),
         ast::Number::BIN_NUMBER
       );
-
-      printf("a BIN\n");
     }
 
   | OCT_NUMBER[str]   {
@@ -304,8 +287,6 @@ number[expr]:
       string($str),
       ast::Number::OCT_NUMBER
     );
-
-    printf("a OCT\n");
   }
 
   | DEC_NUMBER[str]   {
@@ -313,8 +294,6 @@ number[expr]:
       string($str),
       ast::Number::DEC_NUMBER
     );
-
-    printf("a DEC\n");
   }
 
   | HEX_NUMBER[str]   {
@@ -322,8 +301,6 @@ number[expr]:
       string($str),
       ast::Number::HEX_NUMBER
     );
-
-    printf("a HEX\n");
   }
 
   | FLOAT_NUMBER[str] {
@@ -331,10 +308,22 @@ number[expr]:
       string($str),
       ast::Number::FLOAT_NUMBER
     );
-
-    printf("a FLOAT\n");
   }
 
   ;
 
 %% /* ================================= End ============================== */
+
+int yyerror(const char *msg) {
+	fprintf(
+		stderr,
+		"Error %d.%d-%d.%d: %s\n",
+		yylloc.first_line,
+		yylloc.first_column,
+		yylloc.last_line,
+		yylloc.last_column,
+		msg
+	);
+
+	return 0;
+}

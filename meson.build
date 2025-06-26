@@ -27,12 +27,17 @@ CXXFLAGS = run_command('sh','-c',
 CXXFLAGS += [
   '-I../parser/src',
   '-I../lexer/src',
-  '-I../driver/src',
   '-Wall',
   '-I@BUILD_ROOT@']
 
 LDFLAGS = run_command('sh', '-c',
-  'llvm-config-19 --cxxflags --ldflags --system-libs --libs core orcjit native',
+  '''
+  llvm-config-19 \
+    --cxxflags \
+    --ldflags \
+    --system-libs \
+    --libs core orcjit native
+  ''',
   capture: true,
   check: true).stdout().strip().split()
 
@@ -45,7 +50,8 @@ BISONFLAGS = [
   '-Wcounterexamples',
   '--verbose']
 
-compile = ['c++', CXXFLAGS, '-c', '-o', '@OUTPUT@', '@INPUT@']
+compile = [
+  'c++', CXXFLAGS, '-c', '-o', '@OUTPUT@', '@INPUT@']
 
 link = ['c++', LDFLAGS, '-o', '@OUTPUT@', '@INPUT@']
 

@@ -14,6 +14,11 @@ parser_bin = custom_target(
     lex_handle_obj,
     parser_obj[0], 
     custom_target(
+      'ast',
+      output: 'ast.cc.o',
+      input: 'src/ast.cc',
+      command: compile),
+    custom_target(
       'parser_main',
       output: 'main.cc.o',
       input: 'test/main.cc',
