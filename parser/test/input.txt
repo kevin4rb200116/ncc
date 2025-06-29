@@ -1,0 +1,7 @@
+extern sin(x);
+def baz(x, y) x + sin(y);
+
+foo;
+bar;
+
+baz(foo, bar);

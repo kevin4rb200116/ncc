@@ -17,8 +17,12 @@ libnlex = static_library(
   [lexer_src[0]],
   include_directories: ['src','test'])
 
-executable(
+nlex = executable(
   'nlex',
   ['test/main.cc'],
   link_with: libnlex,
   include_directories: ['src','test'])
+
+test('nlex_test',
+  nlex,
+  args: '../lexer/test/input.txt')

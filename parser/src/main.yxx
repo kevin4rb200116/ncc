@@ -2,7 +2,7 @@
 %require "3.8.2"
 %header
 
-%{
+%code top {
   #include <string>
   #include <vector>
 
@@ -13,10 +13,10 @@
   using std::vector;
 
   int yyerror(const char *msg);
-%}
+  int name_leng;
+}
 
 %union{
-  char *cstring;
   void *pointer;
 }
 
@@ -24,167 +24,120 @@
 %token
   LPAR
   RPAR
-  LSQB
-  RSQB
-  COLON
   COMMA
   SEMI
   PLUS
   MINUS
   STAR
   SLASH
-  VBAR
-  AMPER
-  LESS
-  GREATER
-  EQUAL
-  DOT
-  PERCENT
-  LBRACE
-  RBRACE
-  EQEQUAL
-  NOTEQUAL
-  LESSEQUAL
-  GREATEREQUAL
-  TILDE
-  CIRCUMFLEX
-  LEFTSHIFT
-  RIGHTSHIFT
-  DOUBLESTAR
-  PLUSEQUAL
-  MINEQUAL
-  STAREQUAL
-  SLASHEQUAL
-  PERCENTEQUAL
-  AMPEREQUAL
-  VBAREQUAL
-  CIRCUMFLEXEQUAL
-  LEFTSHIFTEQUAL
-  RIGHTSHIFTEQUAL
-  DOUBLESTAREQUAL
-  DOUBLESLASH
-  DOUBLESLASHEQUAL
-  ELLIPSIS
-  RARROW
-  AT
-  ATEQUAL
+
   DEF
   EXTERN
   ;
 //token
 
-%token <cstring>
-  WHITESPACE
-  COMMENT
+%token <pointer> // std::string
   NAME
   HEX_NUMBER
   BIN_NUMBER
   OCT_NUMBER
   DEC_NUMBER
   FLOAT_NUMBER
-  STRING
   ;
 // token
 
 %type <pointer> number
 %type <pointer> name
+%type <pointer> primary    // ast::Expression*
 
 %type <pointer> expression // ast::Expression*
-%type <pointer> top_level  // ast::Function*
-%type <pointer> external   // ast::Prototype*
 %type <pointer> prototype  // ast::Prototype*
-%type <pointer> primary    // ast::Expression*
-%type <pointer> definition // ast::Function*
+%type <pointer> proto      // ast::Prototype*
 
 %type <pointer> call_args  // vector<ast::Expression*>
 %type <pointer> proto_args // vector<string>
 
+%type <pointer> external   // ast::Prototype*
+%type <pointer> top_level  // ast::Function*
+%type <pointer> definition // ast::Function*
+
 %% /* ================================= Begin ============================== */
 
 %start program;
-
-program:
-    %empty
-  | program statement
-  ;
+program: %empty | program statement;
 
 statement:
-    external   SEMI { printf("an external\n"); }
-  | definition SEMI { printf("a definition\n"); }
-  | top_level  SEMI { printf("an top_level expr\n"); }
-  ;
+    external   SEMI {
+      ((ast::Prototype*) $external)
+        -> codegen();
+    }
 
-definition[expr]:
-  prototype[proto] expression[body] {
-    $expr = (void*) new ast::Function(
-      (ast::Prototype*) $proto,
-      (ast::Expression*) $body
-    );
+  | definition SEMI {
+    ((ast::Function*) $definition)
+      -> codegen();
   }
 
-top_level[expr]:
-  expression[body] {
-    $expr = (void*) new ast::Function(
-      new ast::Prototype(
-        "__anon_expr",
-        new vector<string>()
-      ),
-      (ast::Expression*) $body
-    );
+  | top_level  SEMI {
+    ((ast::Function*) $[top_level])
+      -> codegen();
   }
+;
 
-  ;
+definition[expr]: prototype[proto] expression[body] {
+  $expr = (void*) new ast::Function(
+    (ast::Prototype*) $proto,
+    (ast::Expression*) $body
+  );
+};
+
+top_level[expr]: expression[body] {
+  $expr = (void*) new ast::Function(
+    new ast::Prototype(
+      "__anon_expr",
+      new vector<string>()
+    ),
+    (ast::Expression*) $body
+  );
+};
 
 proto_args[expr]:
-    NAME[arg] {
+    %empty {
       $expr = (void*) new vector<string>();
-
-      ((vector<string>*) $expr)
-        -> push_back(string($arg));
     }
+
+  | NAME[arg] {
+    $expr = (void*) new vector<string>();
+    string *arg = (string*) $arg;
+
+    ((vector<string>*) $expr)
+      -> push_back(*arg);
+  }
 
   | proto_args[rest] COMMA NAME[arg] {
     $expr = $rest;
+    string *arg = (string*) $arg;
 
     ((vector<string>*) $expr)
-      -> push_back(string($arg));
+      -> push_back(*arg);
   }
+;
 
-  ;
+proto: NAME[name] LPAR proto_args[args] RPAR {
+  string *name = (string*) $name;
 
-prototype[expr]:
-    DEF NAME[name] LPAR proto_args[args] RPAR {
-      $expr = (void*) new ast::Prototype(
-        string($name),
-        (vector<string>*) $args
-      );
-    }
+  $proto = (void*) new ast::Prototype(
+    *name,
+    (vector<string>*) $args
+  );
+};
 
-  | DEF NAME[name] LPAR RPAR {
-    $expr = (void*) new ast::Prototype(
-      string($name),
-      new vector<string>()
-    );
-  }
+prototype: DEF proto {
+  $prototype = $proto;
+};
 
-  ;
-
-external[expr]:
-    EXTERN NAME[name] LPAR proto_args[args] RPAR {
-      $expr = (void*) new ast::Prototype(
-        string($name),
-        (vector<string>*) $args
-      );
-    }
-
-  | EXTERN NAME[name] LPAR RPAR {
-    $expr = (void*) new ast::Prototype(
-      string($name),
-      new vector<string>()
-    );
-  }
-
-  ;
+external: EXTERN proto {
+  $external = $proto;
+};
 
 expression[expr]:
     primary
@@ -220,22 +173,18 @@ expression[expr]:
       (ast::Expression*) $rhs
     );
   }
+;
 
-  ;
-
-primary[expr]:
-    name
-
-  | number
-
-  | LPAR expression[pexpr] RPAR {
-    $expr = $pexpr;
-  }
-
-  ;
+primary: name | number | LPAR expression RPAR {
+    $primary = $expression;
+};
 
 call_args[expr]:
-    expression[arg] {
+    %empty {
+      $expr = (void*) new vector<ast::Expression*>();
+    }
+
+  | expression[arg] {
       $expr = (void*) new vector<ast::Expression*>();
 
       ((vector<ast::Expression*>*) $expr)
@@ -248,67 +197,71 @@ call_args[expr]:
     ((vector<ast::Expression*>*) $expr)
       -> push_back((ast::Expression*) $arg);
   }
+;
 
-  ;
-
-name[expr]:
+name:
     NAME[str] {
-      $expr = (void*) new ast::Variable(string($str));
+      string *str = (string*) $str;
+
+      $name = (void*) new ast::Variable(*str);
     }
 
   | NAME[str] LPAR call_args[args] RPAR {
-    $expr = (void*) new ast::Call(
-      string($str),
+    string *str = (string*) $str;
+
+    $name = (void*) new ast::Call(
+      *str,
       (vector<ast::Expression*>*) $args
     );
   }
+;
 
-  | NAME[str] LPAR RPAR {
-    $expr = (void*) new ast::Call(
-      string($str),
-      new vector<ast::Expression*>()
-    );
-  }
-
-  ;
-
-number[expr]:
+number:
     BIN_NUMBER[str]   {
-      $expr = (void*) new ast::Number(
-        string($str),
+      string *str = (string*) $str;
+      
+      $number = (void*) new ast::Number(
+        *str,
         ast::Number::BIN_NUMBER
       );
     }
 
   | OCT_NUMBER[str]   {
-    $expr = (void*) new ast::Number(
-      string($str),
+    string *str = (string*) $str;
+
+    $number = (void*) new ast::Number(
+      *str,
       ast::Number::OCT_NUMBER
     );
   }
 
   | DEC_NUMBER[str]   {
-    $expr = (void*) new ast::Number(
-      string($str),
+    string *str = (string*) $str;
+
+    $number = (void*) new ast::Number(
+      *str,
       ast::Number::DEC_NUMBER
     );
   }
 
   | HEX_NUMBER[str]   {
-    $expr = (void*) new ast::Number(
-      string($str),
+    string *str = (string*) $str;
+
+    $number = (void*) new ast::Number(
+      *str,
       ast::Number::HEX_NUMBER
     );
   }
 
   | FLOAT_NUMBER[str] {
-    $expr = (void*) new ast::Number(
-      string($str),
+    string *str = (string*) $str;
+
+    $number = (void*) new ast::Number(
+      *str,
       ast::Number::FLOAT_NUMBER
     );
   }
-
-  ;
+;
 
 %% /* ================================= End ============================== */
 

@@ -39,4 +39,11 @@ lexer_inc = include_directories(
   ))
 
 subdir('parser')
+
+parser_inc = include_directories(
+  fs.relative_to(
+    fs.parent(parser_src[1].full_path()),
+    '.',
+  ))
+
 subdir('codegen')

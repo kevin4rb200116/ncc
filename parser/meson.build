@@ -35,11 +35,16 @@ libnparse = static_library(
     'src',
     'test'])
 
-executable(
+nparse = executable(
   'nparse',
   ['test/main.cc'],
   dependencies: [llvm],
   link_with: [libnparse, libnlex],
   include_directories: [
+    lexer_inc,
     'src',
     'test'])
+
+test('nparse_test',
+  nparse,
+  args: '../parser/test/input.txt')
