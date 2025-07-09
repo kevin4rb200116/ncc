@@ -5,32 +5,32 @@
 
 #include "ast.hh"
 
-llvm::Value *ast::Number::codegen() {
+llvm::Value *ast::Number::irgen() {
 	fprintf(stderr, "%s", value.c_str());
 	return nullptr;
 }
 
-llvm::Value *ast::Variable::codegen() {
+llvm::Value *ast::Variable::irgen() {
 	fprintf(stderr, "%s", name.c_str());
 	return nullptr;
 }
 
-llvm::Value *ast::Binary::codegen() {
-	lhs->codegen();
+llvm::Value *ast::Binary::irgen() {
+	lhs->irgen();
 	fprintf(stderr, " %s ", op.c_str());
-	rhs->codegen();
+	rhs->irgen();
 
 	return nullptr;
 }
 
-llvm::Value *ast::Call::codegen() {
+llvm::Value *ast::Call::irgen() {
 	fprintf(stderr, "%s(", callee.c_str());
 	
 	if (args.size() == 1)
-		(*args.begin())->codegen();
+		(*args.begin())->irgen();
 	else
 		for (auto arg : args) {
-			arg->codegen();
+			arg->irgen();
 
 			if (arg != args[args.size()-1])
 				fprintf(stderr, ", ", arg);
@@ -41,7 +41,7 @@ llvm::Value *ast::Call::codegen() {
 	return nullptr;
 }
 
-llvm::Function *ast::Prototype::codegen() {
+llvm::Function *ast::Prototype::irgen() {
 	fprintf(stderr, "def %s(", name.c_str(), args.size());
 
 	if (args.size() == 1)
@@ -59,10 +59,10 @@ llvm::Function *ast::Prototype::codegen() {
 	return nullptr;
 }
 
-llvm::Function *ast::Function::codegen() {
-	prototype->codegen();
+llvm::Function *ast::Function::irgen() {
+	prototype->irgen();
 	fprintf(stderr, " ");
-	body->codegen();
+	body->irgen();
 
 	return nullptr;
 }

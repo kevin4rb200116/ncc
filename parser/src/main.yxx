@@ -69,17 +69,17 @@ program: %empty | program statement;
 statement:
     external   SEMI {
       ((ast::Prototype*) $external)
-        -> codegen();
+        -> irgen();
     }
 
   | definition SEMI {
     ((ast::Function*) $definition)
-      -> codegen();
+      -> irgen();
   }
 
   | top_level  SEMI {
     ((ast::Function*) $[top_level])
-      -> codegen();
+      -> irgen();
   }
 ;
 

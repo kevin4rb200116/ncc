@@ -8,6 +8,15 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Verifier.h>
 
+#include <llvm/Transforms/InstCombine/InstCombine.h>
+#include <llvm/Transforms/Scalar/Reassociate.h>
+#include <llvm/Transforms/Scalar/GVN.h>
+#include <llvm/Transforms/Scalar/SimplifyCFG.h>
+// #include <llvm/ADT/STLExtras.h>
+// #include <llvm/Support/TargetSelect.h>
+// #include <llvm/Target/TargetMachine.h>
+// #include <llvm/Transforms/Scalar.h>
+
 namespace irgen {
 	State *state;
 
@@ -23,33 +32,33 @@ namespace irgen {
 		builder = make_unique<IRBuilder<>>(*context);
 
 		// Create new pass and analysis managers.
-		//fpm = std::make_unique<FunctionPassManager>();
-		//lam = std::make_unique<LoopAnalysisManager>();
-		//fam = std::make_unique<FunctionAnalysisManager>();
-	  //cgam = std::make_unique<CGSCCAnalysisManager>();
-		//mam = std::make_unique<ModuleAnalysisManager>();
-		//pic = std::make_unique<PassInstrumentationCallbacks>();
-		//si = std::make_unique<StandardInstrumentations>(*context, /*DebugLogging*/ true);
-		//si->registerCallbacks(*pic, mam.get());
+		fpm = std::make_unique<FunctionPassManager>();
+		lam = std::make_unique<LoopAnalysisManager>();
+		fam = std::make_unique<FunctionAnalysisManager>();
+	  cgam = std::make_unique<CGSCCAnalysisManager>();
+		mam = std::make_unique<ModuleAnalysisManager>();
+		pic = std::make_unique<PassInstrumentationCallbacks>();
+		si = std::make_unique<StandardInstrumentations>(*context, /*DebugLogging*/ true);
+		si->registerCallbacks(*pic, mam.get());
 
 		// Add transform passes.
 		// Do simple "peephole" optimizations and bit-twiddling optzns.
-		//fpm->addPass(llvm::InstCombinePass());
+		fpm->addPass(llvm::InstCombinePass());
 
 		// Reassociate expressions.
-		//fpm->addPass(llvm::ReassociatePass());
+		fpm->addPass(llvm::ReassociatePass());
 
 		// Eliminate Common SubExpressions.
-		//fpm->addPass(llvm::GVNPass());
+		fpm->addPass(llvm::GVNPass());
 
 		// Simplify the control flow graph (deleting unreachable blocks, etc).
-		//fpm->addPass(llvm::SimplifyCFGPass());
+		fpm->addPass(llvm::SimplifyCFGPass());
 
 		// Register analysis passes used in these transform passes.
-		/* PassBuilder pb;
+		PassBuilder pb;
 		pb.registerModuleAnalyses(*mam);
 		pb.registerFunctionAnalyses(*fam);
-		pb.crossRegisterProxies(*lam, *fam,   *cgam, *mam); */
+		pb.crossRegisterProxies(*lam, *fam, *cgam, *mam);
 	}
 
 	llvm::Function *State::getFunction(string name) {
@@ -61,7 +70,7 @@ namespace irgen {
 		// prototype.
 		auto fi = prototypes.find(name);
 		if (fi != prototypes.end())
-			return fi->second->codegen();
+			return fi->second->irgen();
 
 		// If no existing prototype exists, return null.
 		return nullptr;
@@ -76,7 +85,7 @@ using llvm::Type;
 using llvm::FunctionType;
 using llvm::BasicBlock;
 
-llvm::Value *ast::Number::codegen() {
+llvm::Value *ast::Number::irgen() {
 	switch (kind) {
 		case (Number::Kind::BIN_NUMBER):
 			return llvm::ConstantInt::get(
@@ -107,7 +116,7 @@ llvm::Value *ast::Number::codegen() {
 	return nullptr;
 }
 
-llvm::Value *ast::Variable::codegen() {
+llvm::Value *ast::Variable::irgen() {
 	// Look this variable up in the function.
 	Value* v = irgen::state->named_values[name];
 
@@ -117,9 +126,9 @@ llvm::Value *ast::Variable::codegen() {
 	return v;
 }
 
-llvm::Value *ast::Binary::codegen() {
-	Value *l = lhs->codegen();
-	Value *r = rhs->codegen();
+llvm::Value *ast::Binary::irgen() {
+	Value *l = lhs->irgen();
+	Value *r = rhs->irgen();
 
 	if (!l || !r)
 		return nullptr;
@@ -140,7 +149,7 @@ llvm::Value *ast::Binary::codegen() {
 		exit(-1);
 }
 
-llvm::Value *ast::Call::codegen() {
+llvm::Value *ast::Call::irgen() {
 	llvm::Function *calleef = irgen::state->getFunction(callee);
 
 	if (!calleef)
@@ -152,7 +161,7 @@ llvm::Value *ast::Call::codegen() {
 	vector<Value*> argsv;
 
 	for (unsigned i = 0, e = args.size(); i != e; ++i) {
-		argsv.push_back(args[i]->codegen());
+		argsv.push_back(args[i]->irgen());
 		if (!argsv.back())
 			return nullptr;
 	}
@@ -160,7 +169,7 @@ llvm::Value *ast::Call::codegen() {
 	return irgen::state->builder->CreateCall(calleef, argsv, "calltmp");
 }
 
-llvm::Function *ast::Prototype::codegen() {
+llvm::Function *ast::Prototype::irgen() {
 	vector<Type*> doubles(args.size(), Type::getDoubleTy(*irgen::state->context));
 	FunctionType *function_type = FunctionType::get(
 		Type::getDoubleTy(*irgen::state->context), doubles, false);
@@ -179,12 +188,12 @@ llvm::Function *ast::Prototype::codegen() {
 	return function;
 }
 
-llvm::Function *ast::Function::codegen() {
+llvm::Function *ast::Function::irgen() {
 	// First, check for an existing function from a previous 'extern' declaration.
 	llvm::Function *function = irgen::state->module->getFunction(prototype->getName());
 
 	if (!function)
-		function = prototype->codegen();
+		function = prototype->irgen();
 
 	if (!function)
 		return nullptr;
@@ -198,12 +207,17 @@ llvm::Function *ast::Function::codegen() {
 	for (auto &arg : function->args())
 		irgen::state->named_values[std::string(arg.getName())] = &arg;
 
-	if (Value *ret_val = body->codegen()) {
+	if (Value *ret_val = body->irgen()) {
 		// Finish off the function.
 		irgen::state->builder->CreateRet(ret_val);
 
 		// Validate the generated code, checking for consistency.
 		llvm::verifyFunction(*function);
+
+		irgen::state->fpm->run(
+			*function,
+			*irgen::state->fam
+		);
 
 		return function;
 	}

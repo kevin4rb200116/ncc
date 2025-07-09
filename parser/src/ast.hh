@@ -27,7 +27,7 @@ namespace ast {
 		public:
 			virtual ~Expression() = default;
 
-			virtual llvm::Value *codegen() = 0;
+			virtual llvm::Value *irgen() = 0;
 	};
 
 	class Number : public Expression {
@@ -43,7 +43,7 @@ namespace ast {
 			Number(string value, Kind kind)
 				: value(value), kind(kind) {}
 
-			llvm::Value *codegen() override;
+			llvm::Value *irgen() override;
 
 		private:
 			string value;
@@ -56,7 +56,7 @@ namespace ast {
 		public:
 			Variable(const string name) : name(name) {}
 
-			llvm::Value *codegen() override;
+			llvm::Value *irgen() override;
 	};
 
 	class Binary : public Expression {
@@ -74,7 +74,7 @@ namespace ast {
 				delete rhs;
 			}
 
-			llvm::Value *codegen() override;
+			llvm::Value *irgen() override;
 	};
 
 	class Call : public Expression {
@@ -89,7 +89,7 @@ namespace ast {
 				args.clear();
 			}
 
-			llvm::Value *codegen() override;
+			llvm::Value *irgen() override;
 	};
 
 	class Prototype {
@@ -106,7 +106,7 @@ namespace ast {
 
 			const string &getName() const { return name; }
 
-			llvm::Function *codegen();
+			llvm::Function *irgen();
 	};
 
 	class Function {
@@ -123,6 +123,6 @@ namespace ast {
 				delete body;
 			}
 
-			llvm::Function *codegen();
+			llvm::Function *irgen();
 	};
 } // namespace ast
