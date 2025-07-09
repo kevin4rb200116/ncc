@@ -1,16 +1,16 @@
 
-libncc = static_library(
-  'ncc',
-  ['src/codegen.cc'],
+libnirgen = static_library(
+  'nirgen',
+  ['src/irgen.cc'],
   dependencies: [llvm],
   include_directories: [
     '../parser/src',
     'src','test'])
 
-ncc = executable(
-  'ncc',
+nirgen = executable(
+  'nirgen',
   ['test/main.cc'],
-  link_with: [libnparse, libnlex, libncc],
+  link_with: [libnparse, libnlex, libnirgen],
   dependencies: [llvm],
   include_directories: [
     lexer_inc,
@@ -20,5 +20,5 @@ ncc = executable(
     'src','test'])
 
 test('ncc_test',
-  ncc,
-  args: '../codegen/test/input.txt')
+  nirgen,
+  args: '../nirgen/test/input.txt')

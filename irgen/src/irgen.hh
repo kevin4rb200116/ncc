@@ -17,7 +17,7 @@
 // #include <llvm/Transforms/Scalar/Reassociate.h>
 // #include <llvm/Transforms/Scalar/SimplifyCFG.h>
 
-namespace codegen {
+namespace irgen {
 	using std::string;
 	using std::unique_ptr;
 	using std::make_unique;
@@ -59,4 +59,4 @@ namespace codegen {
 
 		llvm::Function *getFunction(string name);
 	} State;
-} // namespace codegen
+} // namespace irgen

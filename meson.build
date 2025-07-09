@@ -8,11 +8,6 @@ project('ncc', ['cpp'],
 
 fs = import('fs')
 
-llvm = dependency(
-  'llvm',
-  version: '>= 19.0.0',
-  modules: ['core', 'orcjit', 'native'])
-
 flex = find_program(
   'flex',
   version: '>= 2.6.0')
@@ -20,6 +15,11 @@ flex = find_program(
 bison = find_program(
   'bison',
   version: '>= 3.8.0')
+
+llvm = dependency(
+  'llvm',
+  version: '>= 19.0.0',
+  modules: ['core', 'orcjit', 'native'])
 
 BISONFLAGS = [
   '--defines',
@@ -46,4 +46,4 @@ parser_inc = include_directories(
     '.',
   ))
 
-subdir('codegen')
+subdir('irgen')

@@ -1,5 +1,5 @@
 
-#include "codegen.hh"
+#include "irgen.hh"
 
 #include <llvm/IR/Constants.h>
 #include <llvm/ADT/APFloat.h>
@@ -8,7 +8,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Verifier.h>
 
-namespace codegen {
+namespace irgen {
 	State *state;
 
 	State::State(string &name) : module_name(name) {
@@ -57,7 +57,7 @@ namespace codegen {
 		if (auto *f = module->getFunction(name))
 			return f;
 
-		// If not, check whether we can codegen the declaration from some existing
+		// If not, check whether we can irgen the declaration from some existing
 		// prototype.
 		auto fi = prototypes.find(name);
 		if (fi != prototypes.end())
@@ -66,7 +66,7 @@ namespace codegen {
 		// If no existing prototype exists, return null.
 		return nullptr;
 	}
-} // namespace codegen
+} // namespace irgen
 
 using llvm::Value;
 using llvm::ConstantFP;
@@ -80,27 +80,27 @@ llvm::Value *ast::Number::codegen() {
 	switch (kind) {
 		case (Number::Kind::BIN_NUMBER):
 			return llvm::ConstantInt::get(
-				*codegen::state->context,
+				*irgen::state->context,
 				APInt(64, strtol((&value[2]), nullptr, 2)));
 
 		case (Number::Kind::OCT_NUMBER):
 			return llvm::ConstantInt::get(
-				*codegen::state->context,
+				*irgen::state->context,
 				APInt(64, strtol((&value[2]), nullptr, 8)));
 
 		case (Number::Kind::DEC_NUMBER):
 			return llvm::ConstantInt::get(
-				*codegen::state->context,
+				*irgen::state->context,
 				APInt(64, strtol(value.c_str(), nullptr, 10)));
 
 		case (Number::Kind::HEX_NUMBER):
 			return llvm::ConstantInt::get(
-				*codegen::state->context,
+				*irgen::state->context,
 				APInt(64, strtol((&value[2]), nullptr, 16)));
 
 		case (Number::Kind::FLOAT_NUMBER):
 			return ConstantFP::get(
-				*codegen::state->context,
+				*irgen::state->context,
 				APFloat(strtod(&value[0], nullptr)));
 	}
 
@@ -109,7 +109,7 @@ llvm::Value *ast::Number::codegen() {
 
 llvm::Value *ast::Variable::codegen() {
 	// Look this variable up in the function.
-	Value* v = codegen::state->named_values[name];
+	Value* v = irgen::state->named_values[name];
 
 	if (!v)
 		exit(-1);
@@ -125,23 +125,23 @@ llvm::Value *ast::Binary::codegen() {
 		return nullptr;
 
 	if (op == "+")
-		return codegen::state->builder->CreateFAdd(l, r, "addtmp");
+		return irgen::state->builder->CreateFAdd(l, r, "addtmp");
 
 	else if (op == "-")
-		return codegen::state->builder->CreateFSub(l, r, "subtmp");
+		return irgen::state->builder->CreateFSub(l, r, "subtmp");
 
 	else if (op == "*")
-		return codegen::state->builder->CreateFMul(l, r, "multmp");
+		return irgen::state->builder->CreateFMul(l, r, "multmp");
 
 	else if (op == "/")
-		return codegen::state->builder->CreateFDiv(l, r, "divtmp");
+		return irgen::state->builder->CreateFDiv(l, r, "divtmp");
 
 	else
 		exit(-1);
 }
 
 llvm::Value *ast::Call::codegen() {
-	llvm::Function *calleef = codegen::state->getFunction(callee);
+	llvm::Function *calleef = irgen::state->getFunction(callee);
 
 	if (!calleef)
 		exit(-1);
@@ -157,19 +157,19 @@ llvm::Value *ast::Call::codegen() {
 			return nullptr;
 	}
 
-	return codegen::state->builder->CreateCall(calleef, argsv, "calltmp");
+	return irgen::state->builder->CreateCall(calleef, argsv, "calltmp");
 }
 
 llvm::Function *ast::Prototype::codegen() {
-	vector<Type*> doubles(args.size(), Type::getDoubleTy(*codegen::state->context));
+	vector<Type*> doubles(args.size(), Type::getDoubleTy(*irgen::state->context));
 	FunctionType *function_type = FunctionType::get(
-		Type::getDoubleTy(*codegen::state->context), doubles, false);
+		Type::getDoubleTy(*irgen::state->context), doubles, false);
 
 	llvm::Function *function=llvm::Function::Create(
 		function_type,
 		llvm::Function::ExternalLinkage,
 		name,
-		codegen::state->module.get());
+		irgen::state->module.get());
 
 	// Set names for all arguments.
 	unsigned idx = 0;
@@ -181,7 +181,7 @@ llvm::Function *ast::Prototype::codegen() {
 
 llvm::Function *ast::Function::codegen() {
 	// First, check for an existing function from a previous 'extern' declaration.
-	llvm::Function *function = codegen::state->module->getFunction(prototype->getName());
+	llvm::Function *function = irgen::state->module->getFunction(prototype->getName());
 
 	if (!function)
 		function = prototype->codegen();
@@ -190,17 +190,17 @@ llvm::Function *ast::Function::codegen() {
 		return nullptr;
 
 	// Create a new basic block to start insertion into.
-	BasicBlock *bb = BasicBlock::Create(*codegen::state->context, "entry", function);
-	codegen::state->builder->SetInsertPoint(bb);
+	BasicBlock *bb = BasicBlock::Create(*irgen::state->context, "entry", function);
+	irgen::state->builder->SetInsertPoint(bb);
 
-	// Record the function arguments in the codegen::state->named_values map.
-	codegen::state->named_values.clear();
+	// Record the function arguments in the irgen::state->named_values map.
+	irgen::state->named_values.clear();
 	for (auto &arg : function->args())
-		codegen::state->named_values[std::string(arg.getName())] = &arg;
+		irgen::state->named_values[std::string(arg.getName())] = &arg;
 
 	if (Value *ret_val = body->codegen()) {
 		// Finish off the function.
-		codegen::state->builder->CreateRet(ret_val);
+		irgen::state->builder->CreateRet(ret_val);
 
 		// Validate the generated code, checking for consistency.
 		llvm::verifyFunction(*function);

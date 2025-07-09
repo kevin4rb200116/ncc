@@ -2,11 +2,11 @@
 #include <cstdio>
 #include "lexer.hh"
 #include "parser.hh"
-#include "codegen.hh"
+#include "irgen.hh"
 
-namespace codegen {
+namespace irgen {
 	extern State *state;
-} // namespace codegen
+} // namespace irgen
 
 enum {
 	YYSTDIN = 1,
@@ -31,9 +31,9 @@ int main(int argc, char **argv) {
 			break;
 	}
 
-	codegen::state = new codegen::State(mname);
+	irgen::state = new irgen::State(mname);
 	int result = yyparse();
-	codegen::state->module->print(llvm::errs(), nullptr);
+	irgen::state->module->print(llvm::errs(), nullptr);
 
 	return result;
 }
