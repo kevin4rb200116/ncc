@@ -41,6 +41,20 @@ llvm::Value *ast::Call::irgen() {
 	return nullptr;
 }
 
+llvm::Value *ast::If::irgen() {
+	fprintf(stderr, "if ");
+	condition->irgen();
+
+	fprintf(stderr, " then ");
+	then_body->irgen();
+
+	fprintf(stderr, " else ");
+	else_body->irgen();
+	fprintf(stderr, " endif");
+
+	return nullptr;
+}
+
 llvm::Function *ast::Prototype::irgen() {
 	fprintf(stderr, "def %s(", name.c_str(), args.size());
 
@@ -54,7 +68,7 @@ llvm::Function *ast::Prototype::irgen() {
 				fprintf(stderr, "%s", arg.c_str());
 		}
 
-	fprintf(stderr, ")");
+	fprintf(stderr, ")\n    ");
 
 	return nullptr;
 }

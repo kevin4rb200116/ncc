@@ -18,6 +18,11 @@ typedef enum : int {
 	TOKEN_DEF,
 	TOKEN_EXTERN,
 
+	TOKEN_IF,
+	TOKEN_THEN,
+	TOKEN_ELSE,
+	TOKEN_ENDIF,
+
 	TOKEN_NAME,
 	TOKEN_BIN_NUMBER,
 	TOKEN_OCT_NUMBER,
@@ -142,6 +147,27 @@ yytoken_kind_t handle::EXTERN() {
 	print_simple_token("EXTERN");
 	return TOKEN_EXTERN;
 }
+
+yytoken_kind_t handle::IF() {
+	print_simple_token("IF");
+	return TOKEN_IF;
+}
+
+yytoken_kind_t handle::THEN() {
+	print_simple_token("THEN");
+	return TOKEN_THEN;
+}
+
+yytoken_kind_t handle::ELSE() {
+	print_simple_token("ELSE");
+	return TOKEN_ELSE;
+}
+
+yytoken_kind_t handle::ENDIF() {
+	print_simple_token("ENDIF");
+	return TOKEN_ENDIF;
+}
+
 
 yytoken_kind_t handle::YYEOF() {
 	print_simple_token("YYEOF");

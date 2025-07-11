@@ -34,6 +34,11 @@
 
   DEF
   EXTERN
+
+  IF
+  THEN
+  ELSE
+  ENDIF
   ;
 //token
 
@@ -176,9 +181,23 @@ expression[expr]:
   }
 ;
 
-primary: name | number | LPAR expression RPAR {
+primary:
+  name | number
+  | LPAR expression RPAR {
     $primary = $expression;
-};
+  }
+
+  | IF expression[condition]
+    THEN expression[then_body]
+    ELSE expression[else_body]
+    ENDIF {
+      $primary = (void*) new ast::If(
+        (ast::Expression*) $condition,
+        (ast::Expression*) $[then_body],
+        (ast::Expression*) $[else_body]
+      );
+  }
+;
 
 call_args[expr]:
     %empty {

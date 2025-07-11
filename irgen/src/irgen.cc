@@ -35,7 +35,7 @@ namespace irgen {
 		fpm = std::make_unique<FunctionPassManager>();
 		lam = std::make_unique<LoopAnalysisManager>();
 		fam = std::make_unique<FunctionAnalysisManager>();
-	  cgam = std::make_unique<CGSCCAnalysisManager>();
+		cgam = std::make_unique<CGSCCAnalysisManager>();
 		mam = std::make_unique<ModuleAnalysisManager>();
 		pic = std::make_unique<PassInstrumentationCallbacks>();
 		si = std::make_unique<StandardInstrumentations>(*context, /*DebugLogging*/ true);
@@ -84,6 +84,7 @@ using llvm::APInt;
 using llvm::Type;
 using llvm::FunctionType;
 using llvm::BasicBlock;
+using llvm::PHINode;
 
 llvm::Value *ast::Number::irgen() {
 	switch (kind) {
@@ -169,8 +170,64 @@ llvm::Value *ast::Call::irgen() {
 	return irgen::state->builder->CreateCall(calleef, argsv, "calltmp");
 }
 
+llvm::Value *ast::If::irgen() {
+	Value *condv = condition->irgen();
+	if (!condv)
+		return nullptr;
+
+	// Convert condition to a bool by comparing non-equal to 0.0.
+	condv = irgen::state->builder->CreateFCmpONE(
+			condv, ConstantFP::get(*irgen::state->context, APFloat(0.0)), "ifcond");
+
+	llvm::Function *function = irgen::state->builder->GetInsertBlock()->getParent();
+
+	// Create blocks for the then and else cases.  Insert the 'then' block at the
+	// end of the function.
+	BasicBlock *then_block = BasicBlock::Create(*irgen::state->context, "then", function);
+	BasicBlock *else_block = BasicBlock::Create(*irgen::state->context, "else");
+	BasicBlock *merge_block = BasicBlock::Create(*irgen::state->context, "ifcont");
+
+	irgen::state->builder->CreateCondBr(condv, then_block, else_block);
+
+	// Emit then value.
+	irgen::state->builder->SetInsertPoint(then_block);
+
+	Value *thenv = then_body->irgen();
+	if (!thenv)
+		return nullptr;
+
+	irgen::state->builder->CreateBr(merge_block);
+	// Codegen of 'then_body' can change the current block, update then_block for the PHI.
+	then_block = irgen::state->builder->GetInsertBlock();
+
+	// Emit else block.
+	function->insert(function->end(), else_block);
+	irgen::state->builder->SetInsertPoint(else_block);
+
+	Value *elsev = else_body->irgen();
+	if (!elsev)
+		return nullptr;
+
+	irgen::state->builder->CreateBr(merge_block);
+	// Codegen of 'else_body' can change the current block, update else_block for the PHI.
+	else_block = irgen::state->builder->GetInsertBlock();
+
+	// Emit merge block.
+	function->insert(function->end(), merge_block);
+	irgen::state->builder->SetInsertPoint(merge_block);
+	PHINode *pnode = irgen::state->builder->CreatePHI(Type::getDoubleTy(*irgen::state->context), 2, "iftmp");
+
+	pnode->addIncoming(thenv, then_block);
+	pnode->addIncoming(elsev, else_block);
+	return pnode;
+}
+
 llvm::Function *ast::Prototype::irgen() {
-	vector<Type*> doubles(args.size(), Type::getDoubleTy(*irgen::state->context));
+	vector<Type*> doubles(
+		args.size(),
+		Type::getDoubleTy(*irgen::state->context)
+	);
+
 	FunctionType *function_type = FunctionType::get(
 		Type::getDoubleTy(*irgen::state->context), doubles, false);
 

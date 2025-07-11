@@ -48,6 +48,11 @@ STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 "def"          return handle::DEF();
 "extern"       return handle::EXTERN();
 
+"if"           return handle::IF();
+"then"         return handle::THEN();
+"else"         return handle::ELSE();
+"endif"        return handle::ENDIF();
+
 {WHITESPACE}+  yylloc.step();
 {COMMENT}      yylloc.lines(); yylloc.step();
 \n+            

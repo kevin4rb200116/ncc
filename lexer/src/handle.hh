@@ -20,6 +20,11 @@ namespace handle {
 	yytoken_kind_t DEF();
 	yytoken_kind_t EXTERN();
 
+	yytoken_kind_t IF();
+	yytoken_kind_t THEN();
+	yytoken_kind_t ELSE();
+	yytoken_kind_t ENDIF();
+
 	yytoken_kind_t NAME(const char *);
 	yytoken_kind_t BIN_NUMBER(const char *);
 	yytoken_kind_t OCT_NUMBER(const char *);

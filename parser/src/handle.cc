@@ -93,6 +93,23 @@ yytoken_kind_t handle::EXTERN() {
 	return TOKEN_EXTERN;
 }
 
+yytoken_kind_t handle::IF() {
+	return TOKEN_IF;
+}
+
+yytoken_kind_t handle::THEN() {
+	return TOKEN_THEN;
+}
+
+yytoken_kind_t handle::ELSE() {
+	return TOKEN_ELSE;
+}
+
+yytoken_kind_t handle::ENDIF() {
+	return TOKEN_ENDIF;
+}
+
+
 yytoken_kind_t handle::YYEOF() {
 	return TOKEN_YYEOF;
 }

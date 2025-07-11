@@ -92,6 +92,24 @@ namespace ast {
 			llvm::Value *irgen() override;
 	};
 
+	class If : public Expression {
+		Expression *condition, *then_body, *else_body;
+
+		public:
+			If(Expression *condition, Expression *then_body, Expression *else_body)
+				: condition(condition),
+					then_body(then_body),
+					else_body(else_body) {}
+
+			~If() {
+				delete condition;
+				delete then_body;
+				delete else_body;
+			}
+
+			llvm::Value *irgen() override;
+	};
+
 	class Prototype {
 		string name;
 		vector<string> args;
