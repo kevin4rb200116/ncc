@@ -28,4 +28,5 @@ namespace handle {
 	yytoken_kind_t FLOAT_NUMBER(const char *);
 
 	yytoken_kind_t YYEOF();
+	yytoken_kind_t YYerror();
 } // namespace handle

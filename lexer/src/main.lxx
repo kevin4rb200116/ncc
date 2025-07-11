@@ -3,10 +3,23 @@
 
 %{
 	#include "handle.hh"
+
+	typedef struct YYLTYPE {
+		int first_line;
+		int first_column;
+		int last_line;
+		int last_column;
+
+		void step();
+		void columns(int count=1);
+		void lines(int count=1);
+	} YYLTYPE;
+
+	extern YYLTYPE yylloc;
 %}
 
 COMMENT      #[^\r\n]*
-WHITESPACE   [ \f\t]+
+WHITESPACE   [ \r\t]
 NAME         [_a-zA-Z][_a-zA-Z0-9]*
 
 BIN_NUMBER   0[bB](?:_?[01])+
@@ -17,6 +30,10 @@ FLOAT_NUMBER ([0-9](?:_?[0-9])*\.(?:[0-9](?:_?[0-9])*)?|\.[0-9](?:_?[0-9])*)
 
 STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 
+%{
+	// Code run each time a pattern is matched.
+	# define YY_USER_ACTION yylloc.columns(yyleng);
+%}
 %% /* ================================= Begin ============================== */
 
 "("            return handle::LPAR();
@@ -31,8 +48,10 @@ STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 "def"          return handle::DEF();
 "extern"       return handle::EXTERN();
 
-{WHITESPACE}   /* return handle::WHITESPACE(yytext); */
-{COMMENT}      /* return handle::COMMENT(yytext); */
+{WHITESPACE}+  yylloc.step();
+{COMMENT}      yylloc.lines(); yylloc.step();
+\n+            
+
 {NAME}         return handle::NAME(yytext);
 {BIN_NUMBER}   return handle::BIN_NUMBER(yytext);
 {OCT_NUMBER}   return handle::OCT_NUMBER(yytext);
@@ -40,8 +59,23 @@ STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 {HEX_NUMBER}   return handle::HEX_NUMBER(yytext);
 {FLOAT_NUMBER} return handle::FLOAT_NUMBER(yytext);
 
-[.\n\r]              /* ignore */
-
+.              return handle::YYerror();
 <<EOF>>        return handle::YYEOF();
 
 %% /* ================================= End ============================== */
+
+void YYLTYPE::step() {
+	first_line = last_line;
+	first_column = last_column;
+}
+
+void YYLTYPE::columns(int count) {
+	last_column = last_column + count < 1 ? 1 : last_column + count;
+}
+
+void YYLTYPE::lines(int count) {
+	if (count) {
+		last_column = 1;
+		last_line = last_line + count < 1 ? 1 : last_line + count;
+	}
+}

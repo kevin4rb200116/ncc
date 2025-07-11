@@ -1,6 +1,7 @@
 
 %require "3.8.2"
 %header
+%locations
 
 %code top {
   #include <string>
@@ -268,12 +269,11 @@ number:
 int yyerror(const char *msg) {
 	fprintf(
 		stderr,
-    "Error: %s\n",
-		// "Error %d.%d-%d.%d: %s\n",
-		// yylloc.first_line,
-		// yylloc.first_column,
-		// yylloc.last_line,
-		// yylloc.last_column,
+    "Error %d.%d-%d.%d: %s\n",
+    yylloc.first_line,
+    yylloc.first_column,
+    yylloc.last_line,
+    yylloc.last_column,
 		msg
 	);
 

@@ -96,3 +96,7 @@ yytoken_kind_t handle::EXTERN() {
 yytoken_kind_t handle::YYEOF() {
 	return TOKEN_YYEOF;
 }
+
+yytoken_kind_t handle::YYerror() {
+	return TOKEN_YYerror;
+}
