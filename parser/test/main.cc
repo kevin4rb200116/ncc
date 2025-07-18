@@ -55,6 +55,24 @@ llvm::Value *ast::If::irgen() {
 	return nullptr;
 }
 
+llvm::Value *ast::For::irgen() {
+	fprintf(stderr, "for ");
+
+	start->irgen();
+	fprintf(stderr, ", ");
+
+	end->irgen();
+	fprintf(stderr, ", ");
+
+	step->irgen();
+	fprintf(stderr, " do ");
+
+	body->irgen();
+	fprintf(stderr, " endfor");
+
+	return nullptr;
+}
+
 llvm::Function *ast::Prototype::irgen() {
 	fprintf(stderr, "def %s(", name.c_str(), args.size());
 

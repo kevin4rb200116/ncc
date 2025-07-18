@@ -110,6 +110,17 @@ namespace ast {
 			llvm::Value *irgen() override;
 	};
 
+	class For : public Expression {
+		string var_name;
+		Expression *start, *end, *step, *body;
+
+		public:
+			For(Expression *start, Expression *end, Expression *step, Expression *body)
+				: start(start), end(end), step(step), body(body) {}
+
+				llvm::Value *irgen() override;
+	};
+
 	class Prototype {
 		string name;
 		vector<string> args;

@@ -85,6 +85,7 @@ using llvm::Type;
 using llvm::FunctionType;
 using llvm::BasicBlock;
 using llvm::PHINode;
+using llvm::Constant;
 
 llvm::Value *ast::Number::irgen() {
 	switch (kind) {
@@ -145,6 +146,13 @@ llvm::Value *ast::Binary::irgen() {
 
 	else if (op == "/")
 		return irgen::state->builder->CreateFDiv(l, r, "divtmp");
+
+	else if (op == "<")
+		/* TODO: COMPARISON */;
+
+	else if (op == "<")
+		/* TODO: COMPARISON */;
+
 
 	else
 		exit(-1);
@@ -220,6 +228,86 @@ llvm::Value *ast::If::irgen() {
 	pnode->addIncoming(thenv, then_block);
 	pnode->addIncoming(elsev, else_block);
 	return pnode;
+}
+
+llvm::Value *ast::For::irgen() {
+  // Emit the start code first, without 'variable' in scope.
+  Value *start_value = start->irgen();
+  if (!start_value)
+    return nullptr;
+
+  // Make the new basic block for the loop header, inserting after current
+  // block.
+  llvm::Function *function = irgen::state->builder->GetInsertBlock()->getParent();
+  BasicBlock *preheader_block = irgen::state->builder->GetInsertBlock();
+  BasicBlock *loop_block = BasicBlock::Create(*irgen::state->context, "loop", function);
+
+  // Insert an explicit fall through from the current block to the loop_block.
+  irgen::state->builder->CreateBr(loop_block);
+
+  // start insertion in loop_block.
+  irgen::state->builder->SetInsertPoint(loop_block);
+
+  // start the PHI node with an entry for start.
+  PHINode *variable =
+      irgen::state->builder->CreatePHI(Type::getDoubleTy(*irgen::state->context), 2, var_name);
+  variable->addIncoming(start_value, preheader_block);
+
+  // Within the loop, the variable is defined equal to the PHI node.  If it
+  // shadows an existing variable, we have to restore it, so save it now.
+  Value *old_val = irgen::state->named_values[var_name];
+  irgen::state->named_values[var_name] = variable;
+
+  // Emit the body of the loop.  This, like any other expr, can change the
+  // current BB.  Note that we ignore the value computed by the body, but don't
+  // allow an error.
+  if (!body->irgen())
+    return nullptr;
+
+  // Emit the step value.
+  Value *step_value = nullptr;
+  if (step) {
+    step_value = step->irgen();
+    if (!step_value)
+      return nullptr;
+  } else {
+    // If not specified, use 1.0.
+    step_value = ConstantFP::get(*irgen::state->context, APFloat(1.0));
+  }
+
+  Value *next_var = irgen::state->builder->CreateFAdd(variable, step_value, "nextvar");
+
+  // Compute the end condition.
+  Value *end_condition = end->irgen();
+  if (!end_condition)
+    return nullptr;
+
+  // Convert condition to a bool by comparing non-equal to 0.0.
+  end_condition = irgen::state->builder->CreateFCmpONE(
+      end_condition, ConstantFP::get(*irgen::state->context, APFloat(0.0)), "loopcond");
+
+  // Create the "after loop" block and insert it.
+  BasicBlock *loop_end_block = irgen::state->builder->GetInsertBlock();
+  BasicBlock *after_block =
+      BasicBlock::Create(*irgen::state->context, "afterloop", function);
+
+  // Insert the conditional branch into the end of loop_end_block.
+  irgen::state->builder->CreateCondBr(end_condition, loop_block, after_block);
+
+  // Any new code will be inserted in after_block.
+  irgen::state->builder->SetInsertPoint(after_block);
+
+  // Add a new entry to the PHI node for the backedge.
+  variable->addIncoming(next_var, loop_end_block);
+
+  // Restore the unshadowed variable.
+  if (old_val)
+    irgen::state->named_values[var_name] = old_val;
+  else
+    irgen::state->named_values.erase(var_name);
+
+  // for expr always returns 0.0.
+  return Constant::getNullValue(Type::getDoubleTy(*irgen::state->context));
 }
 
 llvm::Function *ast::Prototype::irgen() {

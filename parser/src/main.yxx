@@ -32,6 +32,46 @@
   STAR
   SLASH
 
+  LSQB
+  RSQB
+  COLON
+  VBAR
+  AMPER
+  LESS
+  GREATER
+  EQUAL
+  DOT
+  PERCENT
+  LBRACE
+  RBRACE
+  EQEQUAL
+  NOTEQUAL
+  LESSEQUAL
+  GREATEREQUAL
+  TILDE
+  CIRCUMFLEX
+  LEFTSHIFT
+  RIGHTSHIFT
+  DOUBLESTAR
+  PLUSEQUAL
+  MINEQUAL
+  STAREQUAL
+  SLASHEQUAL
+  PERCENTEQUAL
+  AMPEREQUAL
+  VBAREQUAL
+  CIRCUMFLEXEQUAL
+  LEFTSHIFTEQUAL
+  RIGHTSHIFTEQUAL
+  DOUBLESTAREQUAL
+  DOUBLESLASH
+  DOUBLESLASHEQUAL
+  ELLIPSIS
+  RARROW
+  AT
+  ATEQUAL
+  HASHTAG
+
   DEF
   EXTERN
 
@@ -39,6 +79,10 @@
   THEN
   ELSE
   ENDIF
+
+  FOR
+  DO
+  ENDFOR
   ;
 //token
 
@@ -172,6 +216,22 @@ expression[expr]:
     );
   }
 
+  | expression[lhs] LESS primary[rhs] {
+    $expr = (void*) new ast::Binary(
+      "<",
+      (ast::Expression*) $lhs,
+      (ast::Expression*) $rhs
+    );
+  }
+
+  | expression[lhs] GREATER primary[rhs] {
+    $expr = (void*) new ast::Binary(
+      ">",
+      (ast::Expression*) $lhs,
+      (ast::Expression*) $rhs
+    );
+  }
+
   | expression[lhs] SLASH primary[rhs] {
     $expr = (void*) new ast::Binary(
       "/",
@@ -195,6 +255,17 @@ primary:
         (ast::Expression*) $condition,
         (ast::Expression*) $[then_body],
         (ast::Expression*) $[else_body]
+      );
+  }
+
+  | FOR expression[start] COMMA expression[end] COMMA expression[step]
+    DO expression[body]
+    ENDFOR {
+      $primary = (void*) new ast::For(
+        (ast::Expression*) $start,
+        (ast::Expression*) $end,
+        (ast::Expression*) $step,
+        (ast::Expression*) $body
       );
   }
 ;

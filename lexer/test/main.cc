@@ -23,6 +23,10 @@ typedef enum : int {
 	TOKEN_ELSE,
 	TOKEN_ENDIF,
 
+	TOKEN_FOR,
+	TOKEN_DO,
+	TOKEN_ENDFOR,
+
 	TOKEN_NAME,
 	TOKEN_BIN_NUMBER,
 	TOKEN_OCT_NUMBER,
@@ -47,139 +51,110 @@ void print_simple_token(const char *name) {
 	fprintf(
 		stdout,
 		"{%s, %d.%d-%d.%d}",
+		name,
 		yylloc.first_line,
 		yylloc.first_column,
 		yylloc.last_line,
-		yylloc.last_column,
-		name
+		yylloc.last_column
 	);
+}
+
+#define SIMPLE_TOKEN(name)      \
+yytoken_kind_t handle::name() { \
+	print_simple_token(#name);    \
+	return TOKEN_##name;          \
 }
 
 void print_value_token(const char *name, const char *value) {
 	fprintf(
 		stdout,
 		"{%s:%s, %d.%d-%d.%d}",
+		name,
+		value,
 		yylloc.first_line,
 		yylloc.first_column,
 		yylloc.last_line,
-		yylloc.last_column,
-		name,
-		value
+		yylloc.last_column
 	);
 }
 
-yytoken_kind_t handle::LPAR() {
-	print_simple_token("LPAR");
-	return TOKEN_LPAR;
+#define VALUE_TOKEN(name)                       \
+yytoken_kind_t handle::name(const char* text) { \
+	print_value_token(#name, text);               \
+	return TOKEN_##name;                          \
 }
 
-yytoken_kind_t handle::RPAR() {
-	print_simple_token("RPAR");
-	return TOKEN_RPAR;
-}
+SIMPLE_TOKEN(LPAR)
+SIMPLE_TOKEN(RPAR)
+SIMPLE_TOKEN(COMMA)
+SIMPLE_TOKEN(SEMI)
+SIMPLE_TOKEN(PLUS)
+SIMPLE_TOKEN(MINUS)
+SIMPLE_TOKEN(STAR)
+SIMPLE_TOKEN(SLASH)
 
-yytoken_kind_t handle::COMMA() {
-	print_simple_token("COMMA");
-	return TOKEN_COMMA;
-}
+SIMPLE_TOKEN(LSQB);
+SIMPLE_TOKEN(RSQB);
+SIMPLE_TOKEN(COLON);
+SIMPLE_TOKEN(VBAR);
+SIMPLE_TOKEN(AMPER);
+SIMPLE_TOKEN(LESS);
+SIMPLE_TOKEN(GREATER);
+SIMPLE_TOKEN(EQUAL);
+SIMPLE_TOKEN(DOT);
+SIMPLE_TOKEN(PERCENT);
+SIMPLE_TOKEN(LBRACE);
+SIMPLE_TOKEN(RBRACE);
+SIMPLE_TOKEN(EQEQUAL);
+SIMPLE_TOKEN(NOTEQUAL);
+SIMPLE_TOKEN(LESSEQUAL);
+SIMPLE_TOKEN(GREATEREQUAL);
+SIMPLE_TOKEN(TILDE);
+SIMPLE_TOKEN(CIRCUMFLEX);
+SIMPLE_TOKEN(LEFTSHIFT);
+SIMPLE_TOKEN(RIGHTSHIFT);
+SIMPLE_TOKEN(DOUBLESTAR);
+SIMPLE_TOKEN(PLUSEQUAL);
+SIMPLE_TOKEN(MINEQUAL);
+SIMPLE_TOKEN(STAREQUAL);
+SIMPLE_TOKEN(SLASHEQUAL);
+SIMPLE_TOKEN(PERCENTEQUAL);
+SIMPLE_TOKEN(AMPEREQUAL);
+SIMPLE_TOKEN(VBAREQUAL);
+SIMPLE_TOKEN(CIRCUMFLEXEQUAL);
+SIMPLE_TOKEN(LEFTSHIFTEQUAL);
+SIMPLE_TOKEN(RIGHTSHIFTEQUAL);
+SIMPLE_TOKEN(DOUBLESTAREQUAL);
+SIMPLE_TOKEN(DOUBLESLASH);
+SIMPLE_TOKEN(DOUBLESLASHEQUAL);
+SIMPLE_TOKEN(ELLIPSIS);
+SIMPLE_TOKEN(RARROW);
+SIMPLE_TOKEN(AT);
+SIMPLE_TOKEN(ATEQUAL);
+SIMPLE_TOKEN(HASHTAG);
 
-yytoken_kind_t handle::SEMI() {
-	print_simple_token("SEMI");
-	return TOKEN_SEMI;
-}
+VALUE_TOKEN(NAME)
+VALUE_TOKEN(HEX_NUMBER)
+VALUE_TOKEN(BIN_NUMBER)
+VALUE_TOKEN(OCT_NUMBER)
+VALUE_TOKEN(DEC_NUMBER)
+VALUE_TOKEN(FLOAT_NUMBER)
 
-yytoken_kind_t handle::PLUS() {
-	print_simple_token("PLUS");
-	return TOKEN_PLUS;
-}
+SIMPLE_TOKEN(DEF)
+SIMPLE_TOKEN(EXTERN)
 
-yytoken_kind_t handle::MINUS() {
-	print_simple_token("MINUS");
-	return TOKEN_MINUS;
-}
+SIMPLE_TOKEN(IF)
+SIMPLE_TOKEN(THEN)
+SIMPLE_TOKEN(ELSE)
+SIMPLE_TOKEN(ENDIF)
 
-yytoken_kind_t handle::STAR() {
-	print_simple_token("STAR");
-	return TOKEN_STAR;
-}
+SIMPLE_TOKEN(FOR)
+SIMPLE_TOKEN(DO)
+SIMPLE_TOKEN(ENDFOR)
 
-yytoken_kind_t handle::SLASH() {
-	print_simple_token("SLASH");
-	return TOKEN_SLASH;
-}
+SIMPLE_TOKEN(YYEOF)
+SIMPLE_TOKEN(YYerror)
 
-yytoken_kind_t handle::NAME(const char* text) {
-	print_value_token("NAME", text);
-	return TOKEN_NAME;
-}
-
-yytoken_kind_t handle::HEX_NUMBER(const char* text) {
-	print_value_token("HEX_NUMBER", text);
-	return TOKEN_HEX_NUMBER;
-}
-
-yytoken_kind_t handle::BIN_NUMBER(const char* text) {
-	print_value_token("BIN_NUMBER", text);
-	return TOKEN_BIN_NUMBER;
-}
-
-yytoken_kind_t handle::OCT_NUMBER(const char* text) {
-	print_value_token("OCT_NUMBER", text);
-	return TOKEN_OCT_NUMBER;
-}
-
-yytoken_kind_t handle::DEC_NUMBER(const char* text) {
-	print_value_token("DEC_NUMBER", text);
-	return TOKEN_DEC_NUMBER;
-}
-
-yytoken_kind_t handle::FLOAT_NUMBER(const char* text) {
-	print_value_token("FLOAT_NUMBER", text);
-	return TOKEN_FLOAT_NUMBER;
-}
-
-yytoken_kind_t handle::DEF() {
-	print_simple_token("DEF");
-	return TOKEN_DEF;
-}
-
-yytoken_kind_t handle::EXTERN() {
-	print_simple_token("EXTERN");
-	return TOKEN_EXTERN;
-}
-
-yytoken_kind_t handle::IF() {
-	print_simple_token("IF");
-	return TOKEN_IF;
-}
-
-yytoken_kind_t handle::THEN() {
-	print_simple_token("THEN");
-	return TOKEN_THEN;
-}
-
-yytoken_kind_t handle::ELSE() {
-	print_simple_token("ELSE");
-	return TOKEN_ELSE;
-}
-
-yytoken_kind_t handle::ENDIF() {
-	print_simple_token("ENDIF");
-	return TOKEN_ENDIF;
-}
-
-
-yytoken_kind_t handle::YYEOF() {
-	print_simple_token("YYEOF");
-	printf("\n");
-	return TOKEN_YYEOF;
-}
-
-yytoken_kind_t handle::YYerror() {
-	print_simple_token("YYerror");
-	printf("\n");
-	return TOKEN_YYerror;
-}
 
 enum {
 	YYSTDIN = 1,

@@ -45,6 +45,46 @@ STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 "*"            return handle::STAR();
 "/"            return handle::SLASH();
 
+"["            return handle::LSQB();
+"]"            return handle::RSQB();
+":"            return handle::COLON();
+"|"            return handle::VBAR();
+"&"            return handle::AMPER();
+"<"            return handle::LESS();
+">"            return handle::GREATER();
+"="            return handle::EQUAL();
+"."            return handle::DOT();
+"%"            return handle::PERCENT();
+"{"            return handle::LBRACE();
+"}"            return handle::RBRACE();
+"=="           return handle::EQEQUAL();
+"!="           return handle::NOTEQUAL();
+"<="           return handle::LESSEQUAL();
+">="           return handle::GREATEREQUAL();
+"~"            return handle::TILDE();
+"^"            return handle::CIRCUMFLEX();
+"<<"           return handle::LEFTSHIFT();
+">>"           return handle::RIGHTSHIFT();
+"**"           return handle::DOUBLESTAR();
+"+="           return handle::PLUSEQUAL();
+"-="           return handle::MINEQUAL();
+"*="           return handle::STAREQUAL();
+"/="           return handle::SLASHEQUAL();
+"%="           return handle::PERCENTEQUAL();
+"&="           return handle::AMPEREQUAL();
+"|="           return handle::VBAREQUAL();
+"^="           return handle::CIRCUMFLEXEQUAL();
+"<<="          return handle::LEFTSHIFTEQUAL();
+">>="          return handle::RIGHTSHIFTEQUAL();
+"**="          return handle::DOUBLESTAREQUAL();
+"//"           return handle::DOUBLESLASH();
+"//="          return handle::DOUBLESLASHEQUAL();
+"..."          return handle::ELLIPSIS();
+"->"           return handle::RARROW();
+"@"            return handle::AT();
+"@="           return handle::ATEQUAL();
+"#"            return handle::HASHTAG();
+
 "def"          return handle::DEF();
 "extern"       return handle::EXTERN();
 
@@ -52,6 +92,10 @@ STRING       ('[^\n'\\]*(?:\\.[^\n'\\]*)*'|\"[^\n\"\\]*(?:\\.[^\n\"\\]*)*\")
 "then"         return handle::THEN();
 "else"         return handle::ELSE();
 "endif"        return handle::ENDIF();
+
+"for"          return handle::FOR();
+"do"           return handle::DO();
+"endfor"       return handle::ENDFOR();
 
 {WHITESPACE}+  yylloc.step();
 {COMMENT}      yylloc.lines(); yylloc.step();

@@ -5,115 +5,86 @@
 #include "parser.hh"
 #include "handle.hh"
 
-yytoken_kind_t handle::LPAR() {
-	return TOKEN_LPAR;
+#define SIMPLE_TOKEN(name)      \
+yytoken_kind_t handle::name() { \
+	return TOKEN_##name;          \
 }
 
-yytoken_kind_t handle::RPAR() {
-	return TOKEN_RPAR;
+#define VALUE_TOKEN(name)                           \
+yytoken_kind_t handle::name(const char* text) {     \
+	yylval.pointer = (void*) new std::string(yytext); \
+	((std::string*) yylval.pointer)                   \
+		-> resize(yyleng);                              \
+	return TOKEN_##name;                              \
 }
 
-yytoken_kind_t handle::COMMA() {
-	return TOKEN_COMMA;
-}
+SIMPLE_TOKEN(LPAR)
+SIMPLE_TOKEN(RPAR)
+SIMPLE_TOKEN(COMMA)
+SIMPLE_TOKEN(SEMI)
+SIMPLE_TOKEN(PLUS)
+SIMPLE_TOKEN(MINUS)
+SIMPLE_TOKEN(STAR)
+SIMPLE_TOKEN(SLASH)
 
-yytoken_kind_t handle::SEMI() {
-	return TOKEN_SEMI;
-}
+SIMPLE_TOKEN(LSQB)
+SIMPLE_TOKEN(RSQB)
+SIMPLE_TOKEN(COLON)
+SIMPLE_TOKEN(VBAR)
+SIMPLE_TOKEN(AMPER)
+SIMPLE_TOKEN(LESS)
+SIMPLE_TOKEN(GREATER)
+SIMPLE_TOKEN(EQUAL)
+SIMPLE_TOKEN(DOT)
+SIMPLE_TOKEN(PERCENT)
+SIMPLE_TOKEN(LBRACE)
+SIMPLE_TOKEN(RBRACE)
+SIMPLE_TOKEN(EQEQUAL)
+SIMPLE_TOKEN(NOTEQUAL)
+SIMPLE_TOKEN(LESSEQUAL)
+SIMPLE_TOKEN(GREATEREQUAL)
+SIMPLE_TOKEN(TILDE)
+SIMPLE_TOKEN(CIRCUMFLEX)
+SIMPLE_TOKEN(LEFTSHIFT)
+SIMPLE_TOKEN(RIGHTSHIFT)
+SIMPLE_TOKEN(DOUBLESTAR)
+SIMPLE_TOKEN(PLUSEQUAL)
+SIMPLE_TOKEN(MINEQUAL)
+SIMPLE_TOKEN(STAREQUAL)
+SIMPLE_TOKEN(SLASHEQUAL)
+SIMPLE_TOKEN(PERCENTEQUAL)
+SIMPLE_TOKEN(AMPEREQUAL)
+SIMPLE_TOKEN(VBAREQUAL)
+SIMPLE_TOKEN(CIRCUMFLEXEQUAL)
+SIMPLE_TOKEN(LEFTSHIFTEQUAL)
+SIMPLE_TOKEN(RIGHTSHIFTEQUAL)
+SIMPLE_TOKEN(DOUBLESTAREQUAL)
+SIMPLE_TOKEN(DOUBLESLASH)
+SIMPLE_TOKEN(DOUBLESLASHEQUAL)
+SIMPLE_TOKEN(ELLIPSIS)
+SIMPLE_TOKEN(RARROW)
+SIMPLE_TOKEN(AT)
+SIMPLE_TOKEN(ATEQUAL)
+SIMPLE_TOKEN(HASHTAG)
 
-yytoken_kind_t handle::PLUS() {
-	return TOKEN_PLUS;
-}
+VALUE_TOKEN(NAME);
+VALUE_TOKEN(HEX_NUMBER);
+VALUE_TOKEN(BIN_NUMBER);
+VALUE_TOKEN(OCT_NUMBER);
+VALUE_TOKEN(DEC_NUMBER);
+VALUE_TOKEN(FLOAT_NUMBER);
 
-yytoken_kind_t handle::MINUS() {
-	return TOKEN_MINUS;
-}
+SIMPLE_TOKEN(DEF)
+SIMPLE_TOKEN(EXTERN)
 
-yytoken_kind_t handle::STAR() {
-	return TOKEN_STAR;
-}
+SIMPLE_TOKEN(IF)
+SIMPLE_TOKEN(THEN)
+SIMPLE_TOKEN(ELSE)
+SIMPLE_TOKEN(ENDIF)
 
-yytoken_kind_t handle::SLASH() {
-	return TOKEN_SLASH;
-}
+SIMPLE_TOKEN(FOR)
+SIMPLE_TOKEN(DO)
+SIMPLE_TOKEN(ENDFOR)
 
-yytoken_kind_t handle::NAME(const char* text) {
-	yylval.pointer = (void*) new std::string(yytext);
-	((std::string*) yylval.pointer)
-		-> resize(yyleng);
-
-	return TOKEN_NAME;
-}
-
-yytoken_kind_t handle::HEX_NUMBER(const char* text) {
-	yylval.pointer = (void*) new std::string(yytext);
-	((std::string*) yylval.pointer)
-		-> resize(yyleng);
-
-	return TOKEN_HEX_NUMBER;
-}
-
-yytoken_kind_t handle::BIN_NUMBER(const char* text) {
-	yylval.pointer = (void*) new std::string(yytext);
-	((std::string*) yylval.pointer)
-		-> resize(yyleng);
-
-	return TOKEN_BIN_NUMBER;
-}
-
-yytoken_kind_t handle::OCT_NUMBER(const char* text) {
-	yylval.pointer = (void*) new std::string(yytext);
-	((std::string*) yylval.pointer)
-		-> resize(yyleng);
-
-	return TOKEN_OCT_NUMBER;
-}
-
-yytoken_kind_t handle::DEC_NUMBER(const char* text) {
-	yylval.pointer = (void*) new std::string(yytext);
-	((std::string*) yylval.pointer)
-		-> resize(yyleng);
-
-	return TOKEN_DEC_NUMBER;
-}
-
-yytoken_kind_t handle::FLOAT_NUMBER(const char* text) {
-	yylval.pointer = (void*) new std::string(yytext);
-	((std::string*) yylval.pointer)
-		-> resize(yyleng);
-
-	return TOKEN_FLOAT_NUMBER;
-}
-
-yytoken_kind_t handle::DEF() {
-	return TOKEN_DEF;
-}
-
-yytoken_kind_t handle::EXTERN() {
-	return TOKEN_EXTERN;
-}
-
-yytoken_kind_t handle::IF() {
-	return TOKEN_IF;
-}
-
-yytoken_kind_t handle::THEN() {
-	return TOKEN_THEN;
-}
-
-yytoken_kind_t handle::ELSE() {
-	return TOKEN_ELSE;
-}
-
-yytoken_kind_t handle::ENDIF() {
-	return TOKEN_ENDIF;
-}
-
-
-yytoken_kind_t handle::YYEOF() {
-	return TOKEN_YYEOF;
-}
-
-yytoken_kind_t handle::YYerror() {
-	return TOKEN_YYerror;
-}
+SIMPLE_TOKEN(YYEOF)
+SIMPLE_TOKEN(YYerror)
